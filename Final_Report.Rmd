@@ -71,3 +71,26 @@ diversity_school %>%
 
 ```
 
+Diversity & Tuition
+
+```{r}
+diversity_enroll_rate <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate_per_state=mean(enrollment_rate))
+
+
+tuition_cost %>% 
+  group_by(state) %>% 
+  summarise(in_state_tuition=mean(in_state_tuition),
+            out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+  merge(diversity_enroll_rate) %>% 
+  ggplot(aes(x=in_state_tuition,y=mean_enrollment_rate_per_state, color=category)) +
+  geom_line()
+
+
+
+
+
+```
+
