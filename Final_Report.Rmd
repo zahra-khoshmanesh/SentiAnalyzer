@@ -48,3 +48,26 @@ diversity_school <- readr::read_csv('https://raw.githubusercontent.com/rfordatas
 
 ```
 
+Let us look at the datasets we have:
+
+1) Diversity Dataset
+
+```{r}
+diversity_school %>% glimpse()
+```
+
+Diversity vs. State
+
+```{r}
+diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate_per_state=mean(enrollment_rate)) %>% 
+  arrange(desc(mean_enrollment_rate_per_state)) %>% 
+    ggplot(aes(x=state,weight=mean_enrollment_rate_per_state,fill=category)) +
+  geom_bar()+
+  coord_flip()
+  
+
+```
+
