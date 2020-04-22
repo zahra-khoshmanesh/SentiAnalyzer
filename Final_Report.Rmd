@@ -94,3 +94,34 @@ tuition_cost %>%
 
 ```
 
+
+Is there any relation between ethnicity and enrollment rate and in state tuition
+
+```{r}
+
+tuition_cost %>% 
+  group_by(state) %>% 
+  summarise(in_state_tuition=mean(in_state_tuition),
+            out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+   merge(diversity_enroll_rate) %>% 
+   filter(category %in% c("Asian","White","Black","American Indian / Alaska Native")) %>%
+  ggplot(aes(x=in_state_tuition,y=mean_enrollment_rate_per_state, color=category)) +
+  geom_point()
+
+```
+
+Is there any relation between ethnicity and enrollment rate and out of state tuition
+
+```{r}
+
+tuition_cost %>% 
+  group_by(state) %>% 
+  summarise(in_state_tuition=mean(in_state_tuition),
+            out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+   merge(diversity_enroll_rate) %>% 
+   filter(category %in% c("Asian","White","Black","American Indian / Alaska Native")) %>%
+  ggplot(aes(x=out_of_state_tuition,y=mean_enrollment_rate_per_state, color=category)) +
+  geom_point()
+
+```
+
