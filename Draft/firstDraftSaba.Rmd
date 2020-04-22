@@ -1,0 +1,103 @@
+---
+title: "STAT480 Project Title: College tuition, diversity, and pay"
+author: "Vahid Azizi, Seyedzahra Khoshmanesh, and Saba Moeinizade"
+date: "4/21/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+```
+
+**Abstract:**
+Many people are interested to know about the tuition, costs, diversity and potential salary when searching for college. In this project, we want to analyze tuition costs across different states, and explore diversity in different schools. The data set includes different variables such as school name, state, type of school, in-state/out-of-state tuition, group/racial/gender category, early/mid-career pay, stem percent and historical tuition information. We are also interested in trends of tuition over time. We will use different summary statistics and visualizations in R to address these problems.
+
+
+
+### Getting familaiar with data
+
+```{r, message=FALSE}
+address<-c('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/')
+
+tuition_cost <- readr::read_csv(paste(address,'tuition_cost.csv',sep=""))
+
+tuition_income <- readr::read_csv(paste(address,'tuition_income.csv',sep=""))
+
+salary_potential <- readr::read_csv(paste(address,'salary_potential.csv',sep=""))
+
+historical_tuition <- readr::read_csv(paste(address,'historical_tuition.csv',sep=""))
+
+diversity_school <- readr::read_csv(paste(address,'diversity_school.csv',sep=""))
+```
+
+```{r}
+tuition_cost%>%glimpse()
+tuition_income%>%glimpse()
+salary_potential%>%glimpse()
+historical_tuition%>%glimpse()
+diversity_school%>%glimpse()
+```
+
+
+### The relationship between college tuition and campus diversity
+#### Zahra
+```{r}
+merged<-dplyr::left_join(tuition_cost, diversity_school, by = c("name", "state"))
+```
+
+### The historical trend of tuition
+#### Saba
+```{r}
+historical_tuition%>%distinct(year)%>%arrange()
+historical_tuition%>%distinct(type)
+historical_tuition%>%distinct(tuition_type)
+table(historical_tuition$type)
+table(historical_tuition$tuition_type)
+```
+The historical tuition is provided across three types of All Institutions, Public, and Private universities. 
+We observe that the data is available consistantly from 2000 till 2017. For convinience, we will manupliate this column to
+have the starting year only (e.g., 2000-01 will be 2000).
+
+```{r}
+historical_tuition<-separate(data=historical_tuition,col = 2,c("year","year_next"))%>%select(-`year_next`)
+```
+
+```{r}
+historical_tuition%>%filter(year>=2000)%>%group_by(year)%>%summarise(average_tuition_cost=mean(tuition_cost))%>%
+ ggplot(aes(x=factor(year),y=average_tuition_cost,group=1))+geom_point(color='blue')+geom_line()+theme_bw()
+```
+
+The average tuition is increased from 2000 till 2005, then there is a sudden decrease and after that we see a huge jump from 2008 to 2009. This follows by a sudden drop and then again increases in 2012. 
+
+
+```{r}
+historical_tuition%>%filter(year>=2000)%>%
+ ggplot(aes(x=factor(year),y=tuition_cost,group=tuition_type,color=tuition_type))+geom_line()+facet_wrap(~type)+
+  theme(axis.text.x = element_text(angle = 90,hjust=1))
+```
+
+### Cost of college tuition in US by geographic area
+#### Vahid
+```{r}
+```
+
+### Average potential salary in early/mid-career 
+#### Saba
+```{r}
+salary_potential%>%distinct(state_name)%>%count()
+```
+This data includes early/mid career pay across 50 states. Let's take a look at universities in Iowa and compare their potential slary.
+
+```{r}
+salary_potential%>%filter(state_name=="Iowa")%>%arrange(name)
+```
+
+
+```{r}
+salary_potential%>%filter(state_name=="Iowa")%>%select(name,early_career_pay,mid_career_pay)%>%reshape2::melt()%>%ggplot()+
+  geom_bar(aes(x=factor(name),y=value,fill=variable),stat='identity',position = 'dodge')+coord_flip()
+```
+
+
