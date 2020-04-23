@@ -8,6 +8,7 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(lubridate)
 ```
 
 **Abstract:**
@@ -15,7 +16,7 @@ Many people are interested to know about the tuition, costs, diversity and poten
 
 
 
-### Getting familaiar with data
+## Getting familaiar with data
 
 ```{r, message=FALSE}
 address<-c('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/')
@@ -40,9 +41,11 @@ diversity_school%>%glimpse()
 ```
 
 
-### The relationship between college tuition and campus diversity
-#### Zahra
+## The relationship between college tuition and campus diversity
 
+```{r}
+#merged<-dplyr::left_join(tuition_cost, diversity_school, by = c("name", "state"))
+```
 First, we look at the availabe diverse categories captured in schools across the US.
 
 ```{r}
@@ -63,9 +66,7 @@ diversity_enroll_rate <- diversity_school %>%
   group_by(state,category) %>% 
   mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
   summarise(mean_enrollment_rate_per_state=mean(enrollment_rate))
-
 diversity_enroll_rate %>% glimpse()
-
 ```
 
 
@@ -80,26 +81,119 @@ tuition_cost %>%
    filter(category %in% c("Asian","White","Black","American Indian / Alaska Native")) %>%
   ggplot(aes(x=in_state_tuition,y=mean_enrollment_rate_per_state, color=category)) +
   geom_point()
+```
 
+
+## The historical trend of tuition
+
+```{r}
+historical_tuition%>%distinct(year)%>%arrange()
+historical_tuition%>%distinct(type)
+historical_tuition%>%distinct(tuition_type)
+table(historical_tuition$type)
+table(historical_tuition$tuition_type)
+```
+The historical tuition is provided across three types of All Institutions, Public, and Private universities. 
+We observe that the data is available consistantly from 2000 till 2017. For convinience, we will manupliate this column to
+have the starting year only (e.g., 2000-01 will be 2000).
+
+```{r}
+historical_tuition<-separate(data=historical_tuition,col = 2,c("year","year_next"))%>%select(-`year_next`)
 ```
 
 ```{r}
-#merged<-dplyr::left_join(tuition_cost, diversity_school, by = c("name", "state"))
+historical_tuition%>%filter(year>=2000)%>%group_by(year)%>%summarise(average_tuition_cost=mean(tuition_cost))%>%
+ ggplot(aes(x=factor(year),y=average_tuition_cost,group=1))+geom_point(color='blue')+geom_line()+theme_bw()
 ```
 
-### The historical trend of tuition
-#### Saba
+The average tuition is increased from 2000 till 2005, then there is a sudden decrease and after that we see a huge jump from 2008 to 2009. This follows by a sudden drop and then again increases in 2012. 
+
+
 ```{r}
+historical_tuition%>%filter(year>=2000)%>%
+ ggplot(aes(x=factor(year),y=tuition_cost,group=tuition_type,color=tuition_type))+geom_line()+facet_wrap(~type)+
+  theme(axis.text.x = element_text(angle = 90,hjust=1))
 ```
 
-### Cost of college tuition in US by geographic area
-#### Vahid
+## Cost of college tuition in US by geographic area
+
 ```{r}
+head(tuition_cost)
 ```
 
-### Average potential salary in early/mid-career 
-#### Saba
 ```{r}
+library(forcats)
+
+tuition_cost %>% group_by(type) %>% summarise(n=n()) %>% ggplot(aes(x=fct_reorder(type,n), y=n,fill=as.factor(type)))+ geom_bar(stat="identity") +labs(y="Number of college ",x="Type")+
+  geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
+  theme(legend.position = "none")
+```
+
+
+
+```{r, fig.width=10,fig.height=8}
+
+tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% summarise(n=n()) %>% ggplot(aes(x=fct_reorder(state,n), y=n,fill=as.factor(state)))+ geom_bar(position = 'dodge',stat="identity") +labs(y="Number of college ",x="State")+
+  geom_text(aes(label=n), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip()+
+  theme(legend.position = "none")
+```
+
+
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,in_state_tuition), y=in_state_tuition,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="In state tuition")+
+  theme(legend.position = "none")
+```
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,out_of_state_tuition), y=out_of_state_tuition,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="Out of state tuition")+
+  theme(legend.position = "none")
+```
+
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,tuition_diff_in_out), y=tuition_diff_in_out,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="Difference in/out tution")+
+  theme(legend.position = "none") 
+```
+
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>%
+  summarise(mean_diff=round(mean(tuition_diff_in_out),2)) %>%
+  ggplot(aes(x=fct_reorder(state,mean_diff), y=mean_diff,fill=as.factor(state))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=mean_diff), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(x="State",y="Mean difference in/out tution")+
+  theme(legend.position = "none") 
+```
+
+
+## Average potential salary in early/mid-career 
+
+```{r}
+salary_potential%>%distinct(state_name)%>%count()
+```
+This data includes early/mid career pay across 50 states. Let's take a look at universities in Iowa and compare their potential slary.
+
+```{r}
+salary_potential%>%filter(state_name=="Iowa")%>%arrange(name)
+```
+
+
+```{r}
+salary_potential%>%filter(state_name=="Iowa")%>%select(name,early_career_pay,mid_career_pay)%>%reshape2::melt()%>%ggplot()+
+  geom_bar(aes(x=factor(name),y=value,fill=variable),stat='identity',position = 'dodge')+coord_flip()
 ```
 
 
