@@ -83,9 +83,45 @@ tuition_cost %>%
 
 ```
 
+
 ```{r}
-#merged<-dplyr::left_join(tuition_cost, diversity_school, by = c("name", "state"))
+tuition_cost %>% 
+  group_by(state) %>% 
+  summarise(in_state_tuition=mean(in_state_tuition),
+            out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+   merge(diversity_enroll_rate) %>% 
+   filter(category %in% c("Asian","White","Black","American Indian / Alaska Native")) %>%
+  ggplot(aes(x=out_of_state_tuition,y=mean_enrollment_rate_per_state, color=category)) +
+  geom_point()
+
 ```
+
+
+
+```{r}
+tuition_cost %>% 
+  group_by(state) %>% 
+  summarise(in_state_tuition=mean(in_state_tuition),
+            out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+   merge(diversity_enroll_rate) %>% 
+   filter(category %in% c("Women","Hispanic")) %>%
+  ggplot(aes(x=in_state_tuition,y=mean_enrollment_rate_per_state, color=category)) +
+  geom_point()
+
+```
+
+
+```{r}
+tuition_cost %>% 
+  group_by(state) %>% 
+  summarise(in_state_tuition=mean(in_state_tuition),
+            out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+   merge(diversity_enroll_rate) %>% 
+   filter(category %in% c("Women","Hispanic")) %>%
+  ggplot(aes(x=out_of_state_tuition,y=mean_enrollment_rate_per_state, color=category)) +
+  geom_point()
+```
+
 
 
 ### The historical trend of tuition
