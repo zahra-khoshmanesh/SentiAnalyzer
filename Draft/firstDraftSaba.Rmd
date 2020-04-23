@@ -43,9 +43,50 @@ diversity_school%>%glimpse()
 
 ### The relationship between college tuition and campus diversity
 #### Zahra
+First, we look at the availabe diverse categories captured in schools across the US.
+
 ```{r}
-merged<-dplyr::left_join(tuition_cost, diversity_school, by = c("name", "state"))
+diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate_per_state=mean(enrollment_rate)) %>% 
+  arrange(desc(mean_enrollment_rate_per_state)) %>% 
+    ggplot(aes(x=state,weight=mean_enrollment_rate_per_state,fill=category)) +
+  geom_bar()+
+  coord_flip()
 ```
+
+Let us create a new variable which indicates the enrollment rate per each category for each state in the US.
+
+```{r}
+diversity_enroll_rate <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate_per_state=mean(enrollment_rate))
+
+diversity_enroll_rate %>% glimpse()
+
+```
+
+
+Now, let us explore any relationship between the enrollment rate and tuition for each diverse category. We merge tuition_cost dataset with diversity dataset.
+
+```{r}
+tuition_cost %>% 
+  group_by(state) %>% 
+  summarise(in_state_tuition=mean(in_state_tuition),
+            out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+   merge(diversity_enroll_rate) %>% 
+   filter(category %in% c("Asian","White","Black","American Indian / Alaska Native")) %>%
+  ggplot(aes(x=in_state_tuition,y=mean_enrollment_rate_per_state, color=category)) +
+  geom_point()
+
+```
+
+```{r}
+#merged<-dplyr::left_join(tuition_cost, diversity_school, by = c("name", "state"))
+```
+
 
 ### The historical trend of tuition
 #### Saba
