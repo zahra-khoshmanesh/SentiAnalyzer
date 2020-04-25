@@ -46,6 +46,39 @@ diversity_school%>%glimpse()
 
 ## The relationship between college tuition and campus diversity
 
+```{r}
+diversity_school %>% filter(category!="Unknown") %>% 
+  ggplot(aes(x=category,y=enrollment, fill=category)) +
+  geom_boxplot()+
+  coord_flip() +
+  scale_y_continuous(labels = scales::comma) 
+```
+Let us figure out the maximum diversity per category are in which universities, state and how much is the enrollment rate.
+```{r}
+max_per_category <- diversity_school %>% 
+  mutate(eroll_rate_category=(enrollment/total_enrollment)*100) %>% 
+  group_by(category) %>% 
+  summarise(university_name=name[which.max(eroll_rate_category)],
+            state=state[which.max(eroll_rate_category)],
+            enrollment_rate=eroll_rate_category[which.max(eroll_rate_category)],
+            total_enroll=total_enrollment[which.max(eroll_rate_category)],
+            category_enroll=enrollment[which.max(eroll_rate_category)])
+
+max_per_category
+
+
+max_per_category %>% 
+  ggplot(aes(x=category,y=enrollment_rate,fill=university_name,label=round(enrollment_rate ,2))) +
+ # replacement of geom_bar(stat = "identity")
+  geom_col() +
+  # avoid overlap of text and bar to make text visible as bar and text have the same colour 
+  geom_text(nudge_y = 1) +
+  coord_flip()
+  
+```
+
+
+
 First, we look at the availabe diverse categories captured in schools across the US.
 
 ```{r}
