@@ -77,6 +77,27 @@ max_per_category %>%
   
 ```
 
+```{r}
+min_per_category <- diversity_school %>% 
+  mutate(eroll_rate_category=(enrollment/total_enrollment)*100) %>% 
+  group_by(category) %>% 
+  summarise(university_name=name[which.min(eroll_rate_category)],
+            state=state[which.min(eroll_rate_category)],
+            enrollment_rate=eroll_rate_category[which.min(eroll_rate_category)],
+            total_enroll=total_enrollment[which.min(eroll_rate_category)],
+            category_enroll=enrollment[which.min(eroll_rate_category)])
+
+min_per_category
+
+
+min_per_category %>% 
+  ggplot(aes(x=category,y=enrollment_rate,fill=university_name,label=round(enrollment_rate ,2))) +
+ # replacement of geom_bar(stat = "identity")
+  geom_col() +
+  # avoid overlap of text and bar to make text visible as bar and text have the same colour 
+  geom_text(nudge_y = 1) +
+  coord_flip()
+```
 
 
 First, we look at the availabe diverse categories captured in schools across the US.

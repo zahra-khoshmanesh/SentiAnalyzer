@@ -7,6 +7,20 @@ output: slidy_presentation
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(lubridate)
+
+address<-c('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/')
+
+tuition_cost <- readr::read_csv(paste(address,'tuition_cost.csv',sep=""))
+
+tuition_income <- readr::read_csv(paste(address,'tuition_income.csv',sep=""))
+
+salary_potential <- readr::read_csv(paste(address,'salary_potential.csv',sep=""))
+
+historical_tuition <- readr::read_csv(paste(address,'historical_tuition.csv',sep=""))
+
+diversity_school <- readr::read_csv(paste(address,'diversity_school.csv',sep=""))
 ```
 
 ## College tuition, diversity, and pay
@@ -16,21 +30,38 @@ knitr::opts_chunk$set(echo = FALSE)
 - The data set includes different variables such as school name, state, type of school, in-state/out-of-state tuition, group/racial/gender category, early/mid-career pay, stem percent and historical tuition information. 
 - We are also interested in trends of tuition over time. We will use different summary statistics and visualizations in R to address these problems.
 
-## Slide with Bullets
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+## Diversity dataset
 
-## Slide with R Output
+```{r, echo = TRUE}
 
-```{r cars, echo = TRUE}
-summary(cars)
+diversity_school %>% glimpse()
+
 ```
 
-## Slide with Plot
+## Finding the most diverse campus per each diversity categories
 
-```{r pressure}
-plot(pressure)
+```{r,echo = TRUE}
+max_per_category <- diversity_school %>% 
+  mutate(eroll_rate_category=(enrollment/total_enrollment)*100) %>% 
+  group_by(category) %>% 
+  summarise(university_name=name[which.max(eroll_rate_category)],
+            state=state[which.max(eroll_rate_category)],
+            enrollment_rate=eroll_rate_category[which.max(eroll_rate_category)],
+            total_enroll=total_enrollment[which.max(eroll_rate_category)],
+            category_enroll=enrollment[which.max(eroll_rate_category)])
+
+max_per_category
+
+```
+
+## Finding the most diverse campus per each diversity categories
+
+```{r}
+max_per_category %>% 
+  ggplot(aes(x=category,y=enrollment_rate,fill=university_name,label=state)) +
+  geom_col() +
+  geom_text(nudge_y = -3) +
+  coord_flip()
 ```
 
