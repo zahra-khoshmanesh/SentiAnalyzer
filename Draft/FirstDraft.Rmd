@@ -95,7 +95,66 @@ tuition_cost %>%
 ### Cost of college tuition in US by geographic area
 #### Vahid
 ```{r}
+head(tuition_cost)
 ```
+
+```{r}
+library(forcats)
+
+tuition_cost %>% group_by(type) %>% summarise(n=n()) %>% ggplot(aes(x=fct_reorder(type,n), y=n,fill=as.factor(type)))+ geom_bar(stat="identity") +labs(y="Number of college ",x="Type")+
+  geom_text(aes(label=n), position=position_dodge(width=0.9), vjust=-0.25)+
+  theme(legend.position = "none")
+```
+
+
+
+```{r, fig.width=10,fig.height=8}
+
+tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% summarise(n=n()) %>% ggplot(aes(x=fct_reorder(state,n), y=n,fill=as.factor(state)))+ geom_bar(position = 'dodge',stat="identity") +labs(y="Number of college ",x="State")+
+  geom_text(aes(label=n), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip()+
+  theme(legend.position = "none")
+```
+
+
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,in_state_tuition), y=in_state_tuition,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="In state tuition")+
+  theme(legend.position = "none")
+```
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,out_of_state_tuition), y=out_of_state_tuition,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="Out of state tuition")+
+  theme(legend.position = "none")
+```
+
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,tuition_diff_in_out), y=tuition_diff_in_out,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="Difference in/out tution")+
+  theme(legend.position = "none") 
+```
+
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>%
+  summarise(mean_diff=round(mean(tuition_diff_in_out),2)) %>%
+  ggplot(aes(x=fct_reorder(state,mean_diff), y=mean_diff,fill=as.factor(state))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=mean_diff), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(x="State",y="Mean difference in/out tution")+
+  theme(legend.position = "none") 
+```
+
 
 ### Average potential salary in early/mid-career 
 #### Saba
