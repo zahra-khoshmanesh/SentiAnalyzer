@@ -156,7 +156,6 @@ tuition_cost %>%
 ```
 
 
-
 ## Tition cost dataset
 
 ```{r, echo = TRUE}
@@ -175,7 +174,7 @@ tuition_cost %>% filter(type!="Other") %>% group_by(type) %>% summarise(n=n()) %
   theme(legend.position = "none")
 ```
 
-# How many collages are there in each state?
+## How many collages are there in each state?
 
 ```{r, fig.width=10,fig.height=8}
 
@@ -186,7 +185,7 @@ tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% summarise(n=n(
 ```
 
 
-# Comparing different states in terms of in state tuition
+## Comparing different states in terms of in state tuition
 
 ```{r,fig.width=10,fig.height=8}
 tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,in_state_tuition), y=in_state_tuition,fill=as.factor(state))) +
@@ -196,7 +195,7 @@ tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=f
   theme(legend.position = "none")
 ```
 
-# Comparing different states in terms of out of state tuition
+## Comparing different states in terms of out of state tuition
 
 ```{r,fig.width=10,fig.height=8}
 tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,out_of_state_tuition), y=out_of_state_tuition,fill=as.factor(state))) +
@@ -206,7 +205,7 @@ tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=f
   theme(legend.position = "none")
 ```
 
-# Comparing in/out of state tuition (1/2)
+## Comparing in/out of state tuition (1/2)
 
 
 ```{r,fig.width=10,fig.height=8}
@@ -216,7 +215,8 @@ tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_
   labs(x="State",y="Difference in/out tution")+
   theme(legend.position = "none") 
 ```
-# Comparing in/out of state tuition (2/2)
+
+## Comparing in/out of state tuition (2/2)
 
 ```{r,fig.width=10,fig.height=8}
 tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>%
@@ -228,7 +228,8 @@ tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_
   labs(x="State",y="Mean difference in/out tution")+
   theme(legend.position = "none") 
 ```
-# In state tuition; different type of colleges; What is the relationship?
+
+## In state tuition; different type of colleges; What is the relationship?
 
 ```{r}
 summary_in_state<- tuition_cost %>% filter(!is.na(state)) %>% filter(type!="Other") %>% group_by(state,type) %>% summarise(mean_in_tu=mean(in_state_tuition)) %>% 
@@ -252,7 +253,8 @@ gg
 
 ```
 
-# Out of state tuition; different type of colleges; What is the relationship?
+## Out of state tuition; different type of colleges; What is the relationship?
+
 ```{r}
 summary_out_state<- tuition_cost %>% filter(!is.na(state)) %>% filter(type!="Other") %>% group_by(state,type) %>% summarise(mean_out_tu=mean(out_of_state_tuition)) %>% 
   mutate(region=tolower(state))
@@ -272,7 +274,8 @@ gg <- gg + geom_map(data=summary_out_state, map=us,
 
 gg
 ```
-# Most expensive collages with out of state tuition
+
+## Most expensive collages with out of state tuition
 
 ```{r,fig.width=10,fig.height=8}
 tuition_cost %>% group_by(name) %>%
@@ -285,7 +288,7 @@ tuition_cost %>% group_by(name) %>%
   theme(legend.position = "none") 
 ```
 
-# The chepeast Collleges in terms of out of state tuition
+## The chepeast Collleges in terms of out of state tuition
 
 ```{r,fig.width=10,fig.height=8}
 tuition_cost %>% group_by(name) %>%
@@ -299,7 +302,8 @@ tuition_cost %>% group_by(name) %>%
   theme(legend.position = "none") 
   
 ```
-# Most expensive collages with in state tuition
+
+## Most expensive collages with in state tuition
 
 ```{r,fig.width=10,fig.height=8}
 tuition_cost %>% group_by(name) %>%
@@ -312,7 +316,7 @@ tuition_cost %>% group_by(name) %>%
   theme(legend.position = "none") 
 ```
 
-# The cheapest collages in terms of in state tuition
+## The cheapest collages in terms of in state tuition
 
 
 ```{r,fig.width=10,fig.height=8}
