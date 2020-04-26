@@ -1,13 +1,17 @@
 ---
-title: "STAT480 Project Title: College tuition, diversity, and pay"
+title: 'STAT480 Project Title: College tuition, diversity, and pay'
 author: "Vahid Azizi, Seyedzahra Khoshmanesh, and Saba Moeinizade"
 date: "4/21/2020"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(lubridate)
 ```
 
 **Abstract:**
@@ -15,7 +19,7 @@ Many people are interested to know about the tuition, costs, diversity and poten
 
 
 
-### Getting familaiar with data
+## Getting familaiar with data
 
 ```{r, message=FALSE}
 address<-c('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/')
@@ -40,8 +44,61 @@ diversity_school%>%glimpse()
 ```
 
 
-### The relationship between college tuition and campus diversity
-#### Zahra
+## The relationship between college tuition and campus diversity
+
+```{r}
+diversity_school %>% filter(category!="Unknown") %>% 
+  ggplot(aes(x=category,y=enrollment, fill=category)) +
+  geom_boxplot()+
+  coord_flip() +
+  scale_y_continuous(labels = scales::comma) 
+```
+Let us figure out the maximum diversity per category are in which universities, state and how much is the enrollment rate.
+```{r}
+max_per_category <- diversity_school %>% 
+  mutate(eroll_rate_category=(enrollment/total_enrollment)*100) %>% 
+  group_by(category) %>% 
+  summarise(university_name=name[which.max(eroll_rate_category)],
+            state=state[which.max(eroll_rate_category)],
+            enrollment_rate=eroll_rate_category[which.max(eroll_rate_category)],
+            total_enroll=total_enrollment[which.max(eroll_rate_category)],
+            category_enroll=enrollment[which.max(eroll_rate_category)])
+
+max_per_category
+
+
+max_per_category %>% 
+  ggplot(aes(x=category,y=enrollment_rate,fill=university_name,label=round(enrollment_rate ,2))) +
+ # replacement of geom_bar(stat = "identity")
+  geom_col() +
+  # avoid overlap of text and bar to make text visible as bar and text have the same colour 
+  geom_text(nudge_y = 1) +
+  coord_flip()
+  
+```
+
+```{r}
+# min_per_category <- diversity_school %>%
+#   mutate(eroll_rate_category=(enrollment/total_enrollment)*100) %>%
+#   group_by(category) %>%
+#   summarise(university_name=name[which.min(eroll_rate_category)],
+#             state=state[which.min(eroll_rate_category)],
+#             enrollment_rate=eroll_rate_category[which.min(eroll_rate_category)],
+#             total_enroll=total_enrollment[which.min(eroll_rate_category)],
+#             category_enroll=enrollment[which.min(eroll_rate_category)])
+# 
+# min_per_category
+# 
+# 
+# min_per_category %>%
+#   ggplot(aes(x=category,y=enrollment_rate,fill=university_name,label=round(enrollment_rate ,2))) +
+#  # replacement of geom_bar(stat = "identity")
+#   geom_col() +
+#   # avoid overlap of text and bar to make text visible as bar and text have the same colour
+#   geom_text(nudge_y = 1) +
+#   coord_flip()
+```
+
 
 First, we look at the availabe diverse categories captured in schools across the US.
 
@@ -56,13 +113,415 @@ diversity_school %>%
   coord_flip()
 ```
 
+```{r}
+
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("White"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate))
+
+
+
+### white map
+us <- map_data("state")
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank())
+gg
+
+
+
+diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("Women"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate)) %>% 
+  ggplot() +
+  geom_bar(aes(x = reorder(state,mean_enrollment_rate), weight = mean_enrollment_rate, fill = state), show.legend = FALSE) +
+  facet_grid(category~.) +
+  coord_flip() +
+  labs(x="", y="")
+
+
+#"Total Minority"
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) + ggtitle("Diversity categories across the US") +facet_wrap(~category)
+gg
+
+```
+
+
+
+```{r}
+
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("White"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) +ggtitle("White")
+gg
+
+
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("Hispanic"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) + ggtitle("Hispanic")
+gg
+
+
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("Black" ),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) +ggtitle("Black")
+gg
+
+
+
+
+
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("Asian"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) +ggtitle("Asian")
+gg
+
+```
+
+
+
+
+## diversity map across states for "American Indian / Alaska Native" , "Native Hawaiian / Pacific Islander" categories
+
+```{r}
+
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("American Indian / Alaska Native"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) +ggtitle("American Indian / Alaska Native")
+gg
+
+
+
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("Women"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) + ggtitle("Native Hawaiian / Pacific Islander")
+gg
+
+
+```
+
+
+
+
+## diversity map across states for "Total Minority" , "Non-Resident Foreign" , "Two Or More Races", "Women" category
+
+```{r}
+
+#"Total Minority"
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("Total Minority"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) + ggtitle("Total Minority")
+gg
+
+## diversity map across states for "Non-Resident Foreign" category
+
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("Non-Resident Foreign"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) + ggtitle("Non-Resident Foreign")
+gg
+
+
+
+## diversity map across states for Two Or More Races category
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("Two Or More Races"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) + ggtitle("Two Or More Races")
+gg
+
+
+
+## diversity map across states for women
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("Women" ),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) + ggtitle("Women")
+gg
+
+```
+
 Let us create a new variable which indicates the enrollment rate per each category for each state in the US.
 
 ```{r}
 diversity_enroll_rate <- diversity_school %>%
   group_by(state,category) %>% 
   mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
-  summarise(mean_enrollment_rate_per_state=mean(enrollment_rate))
+  summarise(mean_enrollment=mean(enrollment_rate))
 
 diversity_enroll_rate %>% glimpse()
 
@@ -78,26 +537,106 @@ tuition_cost %>%
             out_of_state_tuition=mean(out_of_state_tuition)) %>% 
    merge(diversity_enroll_rate) %>% 
    filter(category %in% c("Asian","White","Black","American Indian / Alaska Native")) %>%
-  ggplot(aes(x=in_state_tuition,y=mean_enrollment_rate_per_state, color=category)) +
+  ggplot(aes(x=in_state_tuition,y=mean_enrollment, color=category)) +
   geom_point()
 
+
+tuition_cost %>% 
+  group_by(state) %>% 
+  summarise(in_state_tuition=mean(in_state_tuition),
+            out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+   merge(diversity_enroll_rate) %>% 
+   ggplot(aes(x=in_state_tuition,y=mean_enrollment, color=category)) +
+   geom_point() +
+  facet_wrap(~category)
+
 ```
+
+Out of State Tuition
+```{r}
+
+tuition_cost %>% 
+  group_by(state) %>% 
+  summarise(in_state_tuition=mean(in_state_tuition),
+            out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+   merge(diversity_enroll_rate) %>% 
+   ggplot(aes(x=out_of_state_tuition,y=mean_enrollment, color=category)) +
+   geom_point() +
+  facet_wrap(~category)
+
+```
+
+
 
 ```{r}
-#merged<-dplyr::left_join(tuition_cost, diversity_school, by = c("name", "state"))
+# tuition_cost %>% 
+#   group_by(state) %>% 
+#   summarise(in_state_tuition=mean(in_state_tuition),
+#             out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+#    merge(diversity_enroll_rate) %>% 
+#    filter(category %in% c("Women","Hispanic")) %>%
+#   ggplot(aes(x=in_state_tuition,y=mean_enrollment_rate_per_state, color=category)) +
+#   geom_point()
+
 ```
 
-### The historical trend of tuition
-#### Saba
+
 ```{r}
+<<<<<<< HEAD
+head(tuition_cost)
 ```
 
-### Cost of college tuition in US by geographic area
-#### Vahid
+=======
+# tuition_cost %>% 
+#   group_by(state) %>% 
+#   summarise(in_state_tuition=mean(in_state_tuition),
+#             out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+#    merge(diversity_enroll_rate) %>% 
+#    filter(category %in% c("Women","Hispanic")) %>%
+#   ggplot(aes(x=out_of_state_tuition,y=mean_enrollment_rate_per_state, color=category)) +
+#   geom_point()
+```
+
+
+
+
+
+
+## The historical trend of tuition
+
+```{r}
+historical_tuition%>%distinct(year)%>%arrange()
+historical_tuition%>%distinct(type)
+historical_tuition%>%distinct(tuition_type)
+table(historical_tuition$type)
+table(historical_tuition$tuition_type)
+```
+The historical tuition is provided across three types of All Institutions, Public, and Private universities. 
+We observe that the data is available consistantly from 2000 till 2017. For convinience, we will manupliate this column to
+have the starting year only (e.g., 2000-01 will be 2000).
+
+
+```{r}
+historical_tuition%>%filter(year>=2000)%>%group_by(year)%>%summarise(average_tuition_cost=mean(tuition_cost))%>%
+ ggplot(aes(x=factor(year),y=average_tuition_cost,group=1))+geom_point(color='blue')+geom_line()+theme_bw()
+```
+
+The average tuition is increased from 2000 till 2005, then there is a sudden decrease and after that we see a huge jump from 2008 to 2009. This follows by a sudden drop and then again increases in 2012. 
+
+
+```{r}
+historical_tuition%>%filter(year>=2000)%>%
+ ggplot(aes(x=factor(year),y=tuition_cost,group=tuition_type,color=tuition_type))+geom_line()+facet_wrap(~type)+
+  theme(axis.text.x = element_text(angle = 90,hjust=1))
+```
+
+## Cost of college tuition in US by geographic area
+
 ```{r}
 head(tuition_cost)
 ```
 
+>>>>>>> ee1860b713272e42baaed91a66925ca712d9a7b3
 ```{r}
 library(forcats)
 
@@ -156,9 +695,27 @@ tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_
 ```
 
 
+<<<<<<< HEAD
 ### Average potential salary in early/mid-career 
 #### Saba
+=======
+## Average potential salary in early/mid-career 
+
+
 ```{r}
+salary_potential%>%distinct(state_name)%>%count()
+```
+This data includes early/mid career pay across 50 states. Let's take a look at universities in Iowa and compare their potential slary.
+
+```{r}
+salary_potential%>%filter(state_name=="Iowa")%>%arrange(name)
+```
+
+
+>>>>>>> ee1860b713272e42baaed91a66925ca712d9a7b3
+```{r}
+salary_potential%>%filter(state_name=="Iowa")%>%select(name,early_career_pay,mid_career_pay)%>%reshape2::melt()%>%ggplot()+
+  geom_bar(aes(x=factor(name),y=value,fill=variable),stat='identity',position = 'dodge')+coord_flip()
 ```
 
 

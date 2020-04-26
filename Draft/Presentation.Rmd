@@ -1,0 +1,329 @@
+---
+title: "College tuition, diversity, and pay"
+author: "Zahra Khoshmanesh, Vahid Aziziz, Saba Moeinizadeh"
+date: "4/25/2020"
+output:
+  slidy_presentation: default
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(lubridate)
+
+options(warn=-1)  #warning off
+
+us <- map_data("state")
+
+address<-c('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/')
+
+tuition_cost <- readr::read_csv(paste(address,'tuition_cost.csv',sep=""))
+
+tuition_income <- readr::read_csv(paste(address,'tuition_income.csv',sep=""))
+
+salary_potential <- readr::read_csv(paste(address,'salary_potential.csv',sep=""))
+
+historical_tuition <- readr::read_csv(paste(address,'historical_tuition.csv',sep=""))
+
+diversity_school <- readr::read_csv(paste(address,'diversity_school.csv',sep=""))
+```
+
+## College tuition, diversity, and pay
+
+- Many people are interested to know about the tuition, costs, diversity and potential salary when searching for college. 
+- In this project, we want to analyze tuition costs across different states, and explore diversity in different schools. 
+- The data set includes different variables such as school name, state, type of school, in-state/out-of-state tuition, group/racial/gender category, early/mid-career pay, stem percent and historical tuition information. 
+- We are also interested in trends of tuition over time. We will use different summary statistics and visualizations in R to address these problems.
+
+
+## Diversity dataset
+
+```{r, echo = TRUE}
+
+diversity_school %>% glimpse()
+
+```
+
+## Finding the most diverse campus per each diversity categories
+
+```{r}
+max_per_category <- diversity_school %>% 
+  mutate(eroll_rate_category=(enrollment/total_enrollment)*100) %>% 
+  group_by(category) %>% 
+  summarise(university_name=name[which.max(eroll_rate_category)],
+            state=state[which.max(eroll_rate_category)],
+            enrollment_rate=eroll_rate_category[which.max(eroll_rate_category)],
+            total_enroll=total_enrollment[which.max(eroll_rate_category)],
+            category_enroll=enrollment[which.max(eroll_rate_category)])
+
+max_per_category
+
+```
+
+## Finding the most diverse campus per each diversity categories
+
+```{r}
+max_per_category %>% 
+  ggplot(aes(x=category,y=enrollment_rate,fill=university_name,label=state)) +
+  geom_col() +
+  geom_text(nudge_y = -12) +
+  coord_flip()
+```
+
+## Diversity map of the US for each diversity Group
+
+
+```{r}
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  arrange(desc(mean_enrollment_rate))
+
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) + ggtitle("Diversity categories across the US") +facet_wrap(~category)
+gg
+```
+
+## Women enrollment rate across the US
+
+```{r}
+diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("Women"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate)) %>% 
+  ggplot() +
+  geom_bar(aes(x = reorder(state,mean_enrollment_rate), weight = mean_enrollment_rate, fill = state), show.legend = FALSE) +
+  facet_grid(category~.) +
+  coord_flip() +
+  labs(x="", y="")
+```
+
+
+## Relationship between enrollment rate and in state tuition per each diversity group
+
+```{r}
+diversity_enroll_rate <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment=mean(enrollment_rate))
+
+tuition_cost %>% 
+  group_by(state) %>% 
+  summarise(in_state_tuition=mean(in_state_tuition),
+            out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+   merge(diversity_enroll_rate) %>% 
+   ggplot(aes(x=in_state_tuition,y=mean_enrollment, color=category)) +
+   geom_point() +
+  facet_wrap(~category)
+
+```
+
+
+## Relationship between enrollment rate and out of state tuition per each diversity group
+
+```{r}
+
+tuition_cost %>% 
+  group_by(state) %>% 
+  summarise(in_state_tuition=mean(in_state_tuition),
+            out_of_state_tuition=mean(out_of_state_tuition)) %>% 
+   merge(diversity_enroll_rate) %>% 
+   ggplot(aes(x=out_of_state_tuition,y=mean_enrollment, color=category)) +
+   geom_point() +
+  facet_wrap(~category)
+
+```
+
+
+
+## Tition cost dataset
+
+```{r, echo = TRUE}
+
+tuition_cost %>% glimpse()
+
+```
+
+## Different types of colleges in US
+
+```{r}
+library(forcats)
+
+tuition_cost %>% filter(type!="Other") %>% group_by(type) %>% summarise(n=n()) %>% mutate(per=round(n/sum(n),2)) %>% ggplot(aes(x=fct_reorder(type,per), y=per,fill=as.factor(type)))+ geom_bar(stat="identity") +labs(y="Percentage of college ",x="Type")+
+  geom_text(aes(label=per), position=position_dodge(width=0.9), vjust=-0.25)+
+  theme(legend.position = "none")
+```
+
+# How many collages are there in each state?
+
+```{r, fig.width=10,fig.height=8}
+
+tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% summarise(n=n()) %>% ggplot(aes(x=fct_reorder(state,n), y=n,fill=as.factor(state)))+ geom_bar(position = 'dodge',stat="identity") +labs(y="Number of college ",x="Type")+
+  geom_text(aes(label=n), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip()+
+  theme(legend.position = "none")
+```
+
+
+# Comparing different states in terms of in state tuition
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,in_state_tuition), y=in_state_tuition,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="In state tuition")+
+  theme(legend.position = "none")
+```
+
+# Comparing different states in terms of out of state tuition
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,out_of_state_tuition), y=out_of_state_tuition,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="Out of state tuition")+
+  theme(legend.position = "none")
+```
+
+# Comparing in/out of state tuition (1/2)
+
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,tuition_diff_in_out), y=tuition_diff_in_out,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="Difference in/out tution")+
+  theme(legend.position = "none") 
+```
+# Comparing in/out of state tuition (2/2)
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>%
+  summarise(mean_diff=round(mean(tuition_diff_in_out),2)) %>%
+  ggplot(aes(x=fct_reorder(state,mean_diff), y=mean_diff,fill=as.factor(state))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=mean_diff), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(x="State",y="Mean difference in/out tution")+
+  theme(legend.position = "none") 
+```
+# In state tuition; different type of colleges; What is the relationship?
+
+```{r}
+summary_in_state<- tuition_cost %>% filter(!is.na(state)) %>% filter(type!="Other") %>% group_by(state,type) %>% summarise(mean_in_tu=mean(in_state_tuition)) %>% 
+  mutate(region=tolower(state))
+
+
+gg<-ggplot()
+gg<-gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=summary_in_state, map=us,
+                    aes(fill=mean_in_tu, map_id=region),
+                    color="#ffffff", size=0.15) +
+  labs(title = "Mean in-state tuition of collages in U.S. States",
+    fill = "Mean Tuition") +scale_fill_viridis_c(option = "plasma",direction = -1) +
+  facet_wrap(~type,ncol = 2)
+
+
+gg 
+
+
+```
+
+# Out of state tuition; different type of colleges; What is the relationship?
+```{r}
+summary_out_state<- tuition_cost %>% filter(!is.na(state)) %>% filter(type!="Other") %>% group_by(state,type) %>% summarise(mean_out_tu=mean(out_of_state_tuition)) %>% 
+  mutate(region=tolower(state))
+
+
+gg<-ggplot()
+gg<-gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=summary_out_state, map=us,
+                    aes(fill=mean_out_tu, map_id=region),
+                    color="#ffffff", size=0.15) +
+  labs(title = "Mean out-of-state tuition of collages in U.S. States",
+    fill = "Mean Tuition") +scale_fill_viridis_c(option = "plasma",direction = -1) +
+  facet_wrap(~type,ncol = 2)
+
+
+gg
+```
+# Most expensive collages with out of state tuition
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost %>% group_by(name) %>%
+  summarise(max_out_tuition=max(out_of_state_tuition)) %>% arrange(desc(max_out_tuition)) %>% top_n(10,wt=max_out_tuition) %>%
+  ggplot(aes(x=fct_reorder(name,max_out_tuition), y=max_out_tuition,fill=as.factor(name))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=max_out_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(y="Tuition cost",x="Collage name",title = "Top 10 most expensive collages with out of state tuition") +
+  theme(legend.position = "none") 
+```
+
+# The chepeast Collleges in terms of out of state tuition
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost %>% group_by(name) %>%
+  summarise(min_out_tuition=min(out_of_state_tuition)) %>% arrange(min_out_tuition) %>% 
+  top_n(-10,wt=min_out_tuition) %>% 
+  ggplot(aes(x=fct_reorder(name,min_out_tuition,.desc=TRUE), y=min_out_tuition,fill=as.factor(name))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=min_out_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(y="Tuition cost",x="Collage name",title = "Top 10 cheapest collages with out of state tuition") +
+  theme(legend.position = "none") 
+  
+```
+# Most expensive collages with in state tuition
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost %>% group_by(name) %>%
+  summarise(max_in_tuition=max(in_state_tuition)) %>% arrange(desc(max_in_tuition)) %>% top_n(10,wt=max_in_tuition) %>%
+  ggplot(aes(x=fct_reorder(name,max_in_tuition), y=max_in_tuition,fill=as.factor(name))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=max_in_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(y="Tuition cost",x="Collage name",title = "Top 10 most expensive collages with in state tuition") +
+  theme(legend.position = "none") 
+```
+
+# The cheapest collages in terms of in state tuition
+
+
+```{r,fig.width=10,fig.height=8}
+tuition_cost %>% group_by(name) %>%
+  summarise(min_in_tuition=min(in_state_tuition)) %>% arrange(min_in_tuition) %>% 
+  top_n(-10,wt=min_in_tuition) %>% 
+  ggplot(aes(x=fct_reorder(name,min_in_tuition,.desc=TRUE), y=min_in_tuition,fill=as.factor(name))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=min_in_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(y="Tuition cost",x="Collage name",title = "Top 10 cheapest collages with in state tuition") +
+  theme(legend.position = "none") 
+  
+```
