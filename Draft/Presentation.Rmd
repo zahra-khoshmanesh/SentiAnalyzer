@@ -3,8 +3,9 @@ title: "College tuition, diversity, and pay"
 author: "Zahra Khoshmanesh, Vahid Aziziz, Saba Moeinizadeh"
 date: "4/25/2020"
 output:
-  slidy_presentation: default
+  beamer_presentation: default
   ioslides_presentation: default
+  slidy_presentation: default
 ---
 
 ```{r setup, include=FALSE,tidy=TRUE}
@@ -35,6 +36,26 @@ diversity_school <- readr::read_csv(paste(address,'diversity_school.csv',sep="")
 diversity_school %>% glimpse()
 ```
 
+```{r}
+knitr::kable(head(diversity_school))%>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Diversity categories
+
+```{r}
+unique(diversity_school$category)
+```
+
+```{r}
+library(forcats)
+diversity_school %>% dplyr::group_by(category) %>% dplyr::summarise(count=sum(enrollment)) %>% 
+  ggplot(aes(x=fct_reorder(category,count), y=count,fill=as.factor(category)))+ geom_bar(stat="identity") +labs(y="Pnumber of enrollment ",x="category")+
+  geom_text(aes(label=count), position=position_dodge(width=0.9), vjust=-0.25)+
+  ggplot2::coord_flip() +
+  theme(legend.position = "none")
+```
+
 ## Finding the most diverse campus per each diversity categories
 
 ```{r}
@@ -46,12 +67,15 @@ max_per_category <- diversity_school %>%
             enrollment_rate=eroll_rate_category[which.max(eroll_rate_category)],
             total_enroll=total_enrollment[which.max(eroll_rate_category)],
             category_enroll=enrollment[which.max(eroll_rate_category)])
-max_per_category
+
+knitr::kable(max_per_category)%>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
 ```
 
 ## Finding the most diverse campus per each diversity categories
 
-```{r}
+```{r,fig.width=10,fig.height=8}
 max_per_category %>% 
   ggplot(aes(x=category,y=enrollment_rate,fill=university_name,label=state)) +
   geom_col() +
@@ -62,15 +86,17 @@ max_per_category %>%
 ## Diversity map of the US for each diversity Group
 
 
-```{r}
+```{r,fig.width=10,fig.height=8}
 white <- diversity_school %>%
   group_by(state,category) %>% 
   mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
   summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
   arrange(desc(mean_enrollment_rate))
+
 white_diversity <- white %>% 
   add_rownames("region") %>% 
   mutate(region=tolower(state))
+
 gg <- ggplot()
 gg <- gg + geom_map(data=us, map=us,
                     aes(x=long, y=lat, map_id=region),
@@ -91,7 +117,7 @@ gg
 
 ## Women enrollment rate across the US
 
-```{r}
+```{r,fig.width=10,fig.height=8}
 diversity_school %>%
   group_by(state,category) %>% 
   mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
@@ -106,13 +132,25 @@ diversity_school %>%
 ```
 
 
+## Tition cost dataset
+
+```{r, echo = TRUE}
+tuition_cost %>% glimpse()
+```
+
+### merge tuition cost dataset and diversity dataset
+
+- we are interested to know whether there is any correlation between enrollment rate and each diversity group
+- we did the exploration for both in state and out of state tuition in the next slides
+
 ## Relationship between enrollment rate and in state tuition per each diversity group
 
-```{r}
+```{r,fig.width=10,fig.height=8}
 diversity_enroll_rate <- diversity_school %>%
   group_by(state,category) %>% 
   mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
   summarise(mean_enrollment=mean(enrollment_rate))
+
 tuition_cost %>% 
   group_by(state) %>% 
   summarise(in_state_tuition=mean(in_state_tuition),
@@ -126,7 +164,7 @@ tuition_cost %>%
 
 ## Relationship between enrollment rate and out of state tuition per each diversity group
 
-```{r}
+```{r,fig.width=10,fig.height=8}
 tuition_cost %>% 
   group_by(state) %>% 
   summarise(in_state_tuition=mean(in_state_tuition),
@@ -137,11 +175,6 @@ tuition_cost %>%
   facet_wrap(~category)
 ```
 
-## Tition cost dataset
-
-```{r, echo = TRUE}
-tuition_cost %>% glimpse()
-```
 
 ## Different types of colleges in US
 
