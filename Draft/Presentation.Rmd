@@ -3,9 +3,9 @@ title: "College tuition, diversity, and pay"
 author: "Zahra Khoshmanesh, Vahid Aziziz, Saba Moeinizadeh"
 date: "4/25/2020"
 output:
-  beamer_presentation: default
-  ioslides_presentation: default
   slidy_presentation: default
+  ioslides_presentation: default
+  beamer_presentation: default
 ---
 
 ```{r setup, include=FALSE,tidy=TRUE}
@@ -75,7 +75,7 @@ knitr::kable(max_per_category)%>%
 
 ## Finding the most diverse campus per each diversity categories
 
-```{r,fig.width=10,fig.height=8}
+```{r,fig.width=15,fig.height=10}
 max_per_category %>% 
   ggplot(aes(x=category,y=enrollment_rate,fill=university_name,label=state)) +
   geom_col() +
@@ -86,7 +86,7 @@ max_per_category %>%
 ## Diversity map of the US for each diversity Group
 
 
-```{r,fig.width=10,fig.height=8}
+```{r,fig.width=15,fig.height=10}
 white <- diversity_school %>%
   group_by(state,category) %>% 
   mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
@@ -117,7 +117,7 @@ gg
 
 ## Women enrollment rate across the US
 
-```{r,fig.width=10,fig.height=8}
+```{r,fig.width=15,fig.height=10}
 diversity_school %>%
   group_by(state,category) %>% 
   mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
@@ -145,7 +145,7 @@ tuition_cost %>% glimpse()
 
 ## Relationship between enrollment rate and in state tuition per each diversity group
 
-```{r,fig.width=10,fig.height=8}
+```{r,fig.width=15,fig.height=10}
 diversity_enroll_rate <- diversity_school %>%
   group_by(state,category) %>% 
   mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
@@ -164,7 +164,7 @@ tuition_cost %>%
 
 ## Relationship between enrollment rate and out of state tuition per each diversity group
 
-```{r,fig.width=10,fig.height=8}
+```{r,fig.width=15,fig.height=10}
 tuition_cost %>% 
   group_by(state) %>% 
   summarise(in_state_tuition=mean(in_state_tuition),
