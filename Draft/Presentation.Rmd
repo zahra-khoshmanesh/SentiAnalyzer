@@ -3,9 +3,9 @@ title: "College tuition, diversity, and pay"
 author: "Zahra Khoshmanesh, Vahid Aziziz, Saba Moeinizadeh"
 date: "4/25/2020"
 output:
-  slidy_presentation: default
-  ioslides_presentation: default
   beamer_presentation: default
+  ioslides_presentation: default
+  slidy_presentation: default
 ---
 
 ```{r setup, include=FALSE,tidy=TRUE}
@@ -75,7 +75,7 @@ knitr::kable(max_per_category)%>%
 
 ## Finding the most diverse campus per each diversity categories
 
-```{r,fig.width=15,fig.height=10}
+```{r,fig.width=10,fig.height=8}
 max_per_category %>% 
   ggplot(aes(x=category,y=enrollment_rate,fill=university_name,label=state)) +
   geom_col() +
