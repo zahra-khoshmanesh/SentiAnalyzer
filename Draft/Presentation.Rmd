@@ -3,10 +3,6 @@ title: "College tuition, diversity, and pay"
 author: "Zahra Khoshmanesh, Vahid Aziziz, Saba Moeinizadeh"
 date: "4/25/2020"
 output:
-<<<<<<< HEAD
-=======
-  slidy_presentation: default
->>>>>>> Saba
   beamer_presentation: default
   ioslides_presentation: default
   slidy_presentation: default
@@ -74,24 +70,19 @@ max_per_category <- diversity_school %>%
             enrollment_rate=eroll_rate_category[which.max(eroll_rate_category)],
             total_enroll=total_enrollment[which.max(eroll_rate_category)],
             category_enroll=enrollment[which.max(eroll_rate_category)])
-<<<<<<< HEAD
+
 
 knitr::kable(max_per_category)%>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 
-=======
-knitr::kable(max_per_category)%>%
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
->>>>>>> Saba
+
 ```
 
 ## Finding the most diverse campus per each diversity categories
 
-<<<<<<< HEAD
+
 ```{r,fig.width=10,fig.height=8}
-=======
-```{r,fig.width=15,fig.height=10}
->>>>>>> Saba
+
 max_per_category %>% 
   ggplot(aes(x=category,y=enrollment_rate,fill=university_name,label=state)) +
   geom_col() +
