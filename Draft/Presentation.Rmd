@@ -3,9 +3,9 @@ title: "College tuition, diversity, and pay"
 author: "Zahra Khoshmanesh, Vahid Aziziz, Saba Moeinizadeh"
 date: "4/25/2020"
 output:
-  beamer_presentation: default
-  ioslides_presentation: default
   slidy_presentation: default
+  ioslides_presentation: default
+  beamer_presentation: default
 ---
 
 ```{r setup, include=FALSE,tidy=TRUE}
