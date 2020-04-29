@@ -246,40 +246,35 @@ tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% summarise(n=n(
 ```
 
 
-## Comparing different states in terms of in-state tuition
+## Comparing different states in terms of in state and out of state tuition
 
 ```{r,fig.width=10,fig.height=8}
-tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,in_state_tuition), y=in_state_tuition,fill=as.factor(state))) +
+plot_in<-tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,in_state_tuition), y=in_state_tuition,fill=as.factor(state))) +
   geom_boxplot()+
   coord_flip() +
   labs(x="State",y="In state tuition")+
   theme(legend.position = "none")
-```
 
-## Comparing different states in terms of out-of-state tuition
-
-```{r,fig.width=10,fig.height=8}
-tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,out_of_state_tuition), y=out_of_state_tuition,fill=as.factor(state))) +
+plot_out<-tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,out_of_state_tuition), y=out_of_state_tuition,fill=as.factor(state))) +
   geom_boxplot()+
   coord_flip() +
   labs(x="State",y="Out of state tuition")+
   theme(legend.position = "none")
+grid.arrange(plot_in, plot_out, ncol=2)
 ```
 
-## Comparing in/out-of state tuition (1/2)
+
+
+## Comparing in/out-of state tuition
 
 ```{r,fig.width=10,fig.height=8}
-tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,tuition_diff_in_out), y=tuition_diff_in_out,fill=as.factor(state))) +
+plot_in_out1<-tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,tuition_diff_in_out), y=tuition_diff_in_out,fill=as.factor(state))) +
   geom_boxplot()+
   coord_flip() +
   labs(x="State",y="Difference in/out tution")+
   theme(legend.position = "none") 
-```
 
-## Comparing in/out-of state tuition (2/2)
-
-```{r,fig.width=10,fig.height=8}
-tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>%
+plot_in_out2<-tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>%
   summarise(mean_diff=round(mean(tuition_diff_in_out),2)) %>%
   ggplot(aes(x=fct_reorder(state,mean_diff), y=mean_diff,fill=as.factor(state))) +
   geom_bar(stat="identity")+
@@ -287,7 +282,10 @@ tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_
   coord_flip() +
   labs(x="State",y="Mean difference in/out tution")+
   theme(legend.position = "none") 
+grid.arrange(plot_in_out1, plot_in_out2, ncol=2)
 ```
+
+
 
 ## In-state tuition, different type of colleges; What is the relationship?
 
@@ -325,61 +323,57 @@ gg <- gg + geom_map(data=summary_out_state, map=us,
 gg
 ```
 
-## Most expensive colleges with out-of-state tuition
+## The chepeast/most expensive colleges with out-of-state tuition
 
-```{r,fig.width=10,fig.height=8}
-tuition_cost %>% group_by(name) %>%
+```{r,fig.width=12,fig.height=6}
+plot_exp<-tuition_cost %>% group_by(name) %>%
   summarise(max_out_tuition=max(out_of_state_tuition)) %>% arrange(desc(max_out_tuition)) %>% top_n(10,wt=max_out_tuition) %>%
   ggplot(aes(x=fct_reorder(name,max_out_tuition), y=max_out_tuition,fill=as.factor(name))) +
   geom_bar(stat="identity")+
   geom_text(aes(label=max_out_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
   coord_flip() +
-  labs(y="Tuition cost",x="college name",title = "Top 10 most expensive colleges with out of state tuition") +
+  labs(y="Tuition cost",x="",title = "Top 10 most expensive colleges") +
   theme(legend.position = "none") 
-```
 
-## The chepeast Collleges in terms of out-of-state tuition
 
-```{r,fig.width=10,fig.height=8}
-tuition_cost %>% group_by(name) %>%
+plot_cheap<-tuition_cost %>% group_by(name) %>%
   summarise(min_out_tuition=min(out_of_state_tuition)) %>% arrange(min_out_tuition) %>% 
   top_n(-10,wt=min_out_tuition) %>% 
   ggplot(aes(x=fct_reorder(name,min_out_tuition,.desc=TRUE), y=min_out_tuition,fill=as.factor(name))) +
   geom_bar(stat="identity")+
   geom_text(aes(label=min_out_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
   coord_flip() +
-  labs(y="Tuition cost",x="college name",title = "Top 10 cheapest colleges with out of state tuition") +
-  theme(legend.position = "none") 
-  
+  labs(y="Tuition cost",x="",title = "Top 10 cheapest colleges") +
+  theme(legend.position = "none")
+
+grid.arrange(plot_cheap,plot_exp, ncol=2)
+
 ```
 
-## Most expensive colleges with in-state tuition
 
-```{r,fig.width=10,fig.height=8}
-tuition_cost %>% group_by(name) %>%
+
+## The cheapest/most expensive colleges with in-state tuition
+
+```{r,fig.width=12,fig.height=6}
+plot_exp2<-tuition_cost %>% group_by(name) %>%
   summarise(max_in_tuition=max(in_state_tuition)) %>% arrange(desc(max_in_tuition)) %>% top_n(10,wt=max_in_tuition) %>%
   ggplot(aes(x=fct_reorder(name,max_in_tuition), y=max_in_tuition,fill=as.factor(name))) +
   geom_bar(stat="identity")+
   geom_text(aes(label=max_in_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
   coord_flip() +
-  labs(y="Tuition cost",x="college name",title = "Top 10 most expensive colleges with in state tuition") +
+  labs(y="Tuition cost",x="",title = "Top 10 most expensive colleges with in state tuition") +
   theme(legend.position = "none") 
-```
 
-## The cheapest colleges in terms of in-state-tuition
-
-
-```{r,fig.width=10,fig.height=8}
-tuition_cost %>% group_by(name) %>%
+plot_cheap2<-tuition_cost %>% group_by(name) %>%
   summarise(min_in_tuition=min(in_state_tuition)) %>% arrange(min_in_tuition) %>% 
   top_n(-10,wt=min_in_tuition) %>% 
   ggplot(aes(x=fct_reorder(name,min_in_tuition,.desc=TRUE), y=min_in_tuition,fill=as.factor(name))) +
   geom_bar(stat="identity")+
   geom_text(aes(label=min_in_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
   coord_flip() +
-  labs(y="Tuition cost",x="college name",title = "Top 10 cheapest colleges with in state tuition") +
+  labs(y="Tuition cost",x="",title = "Top 10 cheapest colleges with in state tuition") +
   theme(legend.position = "none") 
-  
+grid.arrange(plot_cheap2,plot_exp2, ncol=2)
 ```
 
 ## The historical tuition dataset
@@ -482,6 +476,8 @@ gg
 
 - The map of diversity across the US indicates that the US colleges are not equally diverse geographically.
 - There are some relationship between different diversity groups and tuition and early career salary.
+- Average out of state tuition differs across the country while in state tuition in different states is almost same on average
+- East coast colleges are more expensive in terms of in state and out of state tuition  
 - Massachusetts has the highest in state tuition
 - Private schools cost more than public schools
 - Historical trend of tuition showed that tuition is increasing over time
