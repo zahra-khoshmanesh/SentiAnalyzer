@@ -10,7 +10,6 @@ output:
 ---
 
 
-
 ```{r setup, include=FALSE,tidy=TRUE,fig.align = 'center'}
 knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)

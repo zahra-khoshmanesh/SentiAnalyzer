@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.5.5)  6 MAY 2020 00:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.5.5)  6 MAY 2020 17:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -609,7 +609,7 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 126
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (./Final-Report-May.toc
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 1.
+(Font)              <10.95> on input line 3.
 )
 \tf@toc=\write5
 \openout5 = `Final-Report-May.toc'.
@@ -620,267 +620,249 @@ LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 
-Package xcolor Warning: Incompatible color definition on input line 164.
+Package xcolor Warning: Incompatible color definition on input line 167.
 
 [1
 
 {/Users/sabamz/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
-65.
+68.
 (/Users/sabamz/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 166.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 169.
 
-Package xcolor Warning: Incompatible color definition on input line 168.
-
-
-Package xcolor Warning: Incompatible color definition on input line 168.
+Package xcolor Warning: Incompatible color definition on input line 171.
 
 
-Overfull \hbox (72.12341pt too wide) in paragraph at lines 182--199
+Package xcolor Warning: Incompatible color definition on input line 171.
+
+
+Overfull \hbox (72.12341pt too wide) in paragraph at lines 185--202
  [][] 
  []
 
-<Final-Report-May_files/figure-latex/unnamed-chunk-3-1.pdf, id=51, 857.2025pt x
+<Final-Report-May_files/figure-latex/unnamed-chunk-3-1.pdf, id=57, 857.2025pt x
  569.12625pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-3-1.pdf Graphic file (t
 ype pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-3-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-3-1.
-pdf  used on input line 204.
+pdf  used on input line 207.
 (pdftex.def)             Requested size: 469.74937pt x 311.88278pt.
 [2]
-Overfull \hbox (307.68997pt too wide) in paragraph at lines 211--238
+Overfull \hbox (307.68997pt too wide) in paragraph at lines 214--241
  [][] 
  []
 
 [3 <./Final-Report-May_files/figure-latex/unnamed-chunk-3-1.pdf>]
-<Final-Report-May_files/figure-latex/unnamed-chunk-5-1.pdf, id=73, 706.64pt x 5
+<Final-Report-May_files/figure-latex/unnamed-chunk-5-1.pdf, id=79, 706.64pt x 5
 68.1225pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (t
 ype pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-5-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-5-1.
-pdf  used on input line 243.
+pdf  used on input line 246.
 (pdftex.def)             Requested size: 469.75874pt x 377.67534pt.
 [4]
-<Final-Report-May_files/figure-latex/unnamed-chunk-6-1.pdf, id=79, 1064.97874pt
+<Final-Report-May_files/figure-latex/unnamed-chunk-6-1.pdf, id=85, 1064.97874pt
  x 427.5975pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-6-1.pdf Graphic file (t
 ype pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-6-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-6-1.
-pdf  used on input line 248.
+pdf  used on input line 251.
 (pdftex.def)             Requested size: 469.74586pt x 188.60672pt.
 [5 <./Final-Report-May_files/figure-latex/unnamed-chunk-5-1.pdf>]
-<Final-Report-May_files/figure-latex/unnamed-chunk-7-1.pdf, id=94, 698.61pt x 5
-53.06625pt>
+<Final-Report-May_files/figure-latex/unnamed-chunk-7-1.pdf, id=100, 698.61pt x 
+553.06625pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (t
 ype pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-7-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-7-1.
-pdf  used on input line 253.
+pdf  used on input line 256.
 (pdftex.def)             Requested size: 469.7612pt x 371.89427pt.
 
-Package xcolor Warning: Incompatible color definition on input line 258.
+Package xcolor Warning: Incompatible color definition on input line 261.
 
 [6 <./Final-Report-May_files/figure-latex/unnamed-chunk-6-1.pdf> <./Final-Repor
 t-May_files/figure-latex/unnamed-chunk-7-1.pdf>]
 
-Package xcolor Warning: Incompatible color definition on input line 262.
+Package xcolor Warning: Incompatible color definition on input line 265.
 
 
-Package xcolor Warning: Incompatible color definition on input line 262.
+Package xcolor Warning: Incompatible color definition on input line 265.
 
-<Final-Report-May_files/figure-latex/unnamed-chunk-9-1.pdf, id=118, 1067.99pt x
+<Final-Report-May_files/figure-latex/unnamed-chunk-9-1.pdf, id=124, 1067.99pt x
  568.1225pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-9-1.pdf Graphic file (t
 ype pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-9-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-9-1.
-pdf  used on input line 293.
+pdf  used on input line 296.
 (pdftex.def)             Requested size: 469.7541pt x 249.88797pt.
 [7]
-<Final-Report-May_files/figure-latex/unnamed-chunk-10-1.pdf, id=127, 1067.99pt 
+<Final-Report-May_files/figure-latex/unnamed-chunk-10-1.pdf, id=133, 1067.99pt 
 x 568.1225pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-10-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-10-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-10-1
-.pdf  used on input line 298.
+.pdf  used on input line 301.
 (pdftex.def)             Requested size: 469.7541pt x 249.88797pt.
 [8 <./Final-Report-May_files/figure-latex/unnamed-chunk-9-1.pdf> <./Final-Repor
 t-May_files/figure-latex/unnamed-chunk-10-1.pdf>]
-<Final-Report-May_files/figure-latex/unnamed-chunk-11-1.pdf, id=161, 1067.99pt 
+<Final-Report-May_files/figure-latex/unnamed-chunk-11-1.pdf, id=167, 1067.99pt 
 x 568.1225pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-11-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-11-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-11-1
-.pdf  used on input line 309.
+.pdf  used on input line 312.
 (pdftex.def)             Requested size: 469.7541pt x 249.88797pt.
-<Final-Report-May_files/figure-latex/unnamed-chunk-12-1.pdf, id=162, 463.7325pt
+<Final-Report-May_files/figure-latex/unnamed-chunk-12-1.pdf, id=168, 463.7325pt
  x 315.1775pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-12-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-12-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-12-1
-.pdf  used on input line 314.
+.pdf  used on input line 317.
 (pdftex.def)             Requested size: 463.73842pt x 315.18153pt.
 [9 <./Final-Report-May_files/figure-latex/unnamed-chunk-11-1.pdf>]
-<Final-Report-May_files/figure-latex/unnamed-chunk-13-1.pdf, id=181, 712.6625pt
+<Final-Report-May_files/figure-latex/unnamed-chunk-13-1.pdf, id=187, 712.6625pt
  x 569.12625pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-13-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-13-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-13-1
-.pdf  used on input line 319.
+.pdf  used on input line 322.
 (pdftex.def)             Requested size: 469.74974pt x 375.13817pt.
 [10 <./Final-Report-May_files/figure-latex/unnamed-chunk-12-1.pdf>]
-<Final-Report-May_files/figure-latex/unnamed-chunk-14-1.pdf, id=195, 712.6625pt
+<Final-Report-May_files/figure-latex/unnamed-chunk-14-1.pdf, id=201, 712.6625pt
  x 569.12625pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-14-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-14-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-14-1
-.pdf  used on input line 324.
+.pdf  used on input line 327.
 (pdftex.def)             Requested size: 469.74974pt x 375.13817pt.
 [11 <./Final-Report-May_files/figure-latex/unnamed-chunk-13-1.pdf>]
-<Final-Report-May_files/figure-latex/unnamed-chunk-15-1.pdf, id=209, 712.6625pt
+<Final-Report-May_files/figure-latex/unnamed-chunk-15-1.pdf, id=215, 712.6625pt
  x 569.12625pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-15-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-15-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-15-1
-.pdf  used on input line 329.
+.pdf  used on input line 332.
 (pdftex.def)             Requested size: 469.74974pt x 375.13817pt.
 [12 <./Final-Report-May_files/figure-latex/unnamed-chunk-14-1.pdf>]
-<Final-Report-May_files/figure-latex/unnamed-chunk-16-1.pdf, id=223, 453.695pt 
+<Final-Report-May_files/figure-latex/unnamed-chunk-16-1.pdf, id=229, 453.695pt 
 x 315.1775pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-16-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-16-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-16-1
-.pdf  used on input line 334.
+.pdf  used on input line 337.
 (pdftex.def)             Requested size: 453.6939pt x 315.17673pt.
 [13 <./Final-Report-May_files/figure-latex/unnamed-chunk-15-1.pdf>]
-<Final-Report-May_files/figure-latex/unnamed-chunk-17-1.pdf, id=238, 453.695pt 
+<Final-Report-May_files/figure-latex/unnamed-chunk-17-1.pdf, id=244, 453.695pt 
 x 315.1775pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-17-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-17-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-17-1
-.pdf  used on input line 339.
+.pdf  used on input line 342.
 (pdftex.def)             Requested size: 453.6939pt x 315.17673pt.
 [14 <./Final-Report-May_files/figure-latex/unnamed-chunk-16-1.pdf>]
-<Final-Report-May_files/figure-latex/unnamed-chunk-18-1.pdf, id=253, 845.1575pt
+<Final-Report-May_files/figure-latex/unnamed-chunk-18-1.pdf, id=259, 845.1575pt
  x 424.58624pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-18-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-18-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-18-1
-.pdf  used on input line 344.
+.pdf  used on input line 347.
 (pdftex.def)             Requested size: 469.76436pt x 235.998pt.
 [15 <./Final-Report-May_files/figure-latex/unnamed-chunk-17-1.pdf> <./Final-Rep
 ort-May_files/figure-latex/unnamed-chunk-18-1.pdf>]
-<Final-Report-May_files/figure-latex/unnamed-chunk-19-1.pdf, id=277, 849.1725pt
+<Final-Report-May_files/figure-latex/unnamed-chunk-19-1.pdf, id=283, 849.1725pt
  x 424.58624pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-19-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-19-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-19-1
-.pdf  used on input line 349.
+.pdf  used on input line 352.
 (pdftex.def)             Requested size: 469.7544pt x 234.8772pt.
 
-Overfull \hbox (16.99937pt too wide) in paragraph at lines 349--350
+Overfull \hbox (16.99937pt too wide) in paragraph at lines 352--353
 [][] 
  []
 
-[16 <./Final-Report-May_files/figure-latex/unnamed-chunk-19-1.pdf>]
-Overfull \hbox (1.64113pt too wide) in paragraph at lines 396--396
-[]\T1/lmtt/m/n/10.95 ##  [1] 1986 1996 2001 2002 2003 2004 2005 2006 2007 2008 
-2009 2010 2011 2012 2013[] 
- []
-
-<Final-Report-May_files/figure-latex/unnamed-chunk-23-1.pdf, id=299, 566.115pt 
+[16 <./Final-Report-May_files/figure-latex/unnamed-chunk-19-1.pdf>] [17]
+<Final-Report-May_files/figure-latex/unnamed-chunk-23-1.pdf, id=305, 566.115pt 
 x 424.58624pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-23-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-23-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-23-1
-.pdf  used on input line 401.
+.pdf  used on input line 424.
 (pdftex.def)             Requested size: 469.76303pt x 352.32227pt.
-<Final-Report-May_files/figure-latex/unnamed-chunk-24-1.pdf, id=300, 566.115pt 
+<Final-Report-May_files/figure-latex/unnamed-chunk-24-1.pdf, id=306, 566.115pt 
 x 424.58624pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-24-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-24-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-24-1
-.pdf  used on input line 406.
+.pdf  used on input line 431.
 (pdftex.def)             Requested size: 469.76303pt x 352.32227pt.
-[17 <./Final-Report-May_files/figure-latex/unnamed-chunk-23-1.pdf>]
-Overfull \hbox (87.74864pt too wide) in paragraph at lines 416--433
- [][] 
- []
-
-<Final-Report-May_files/figure-latex/unnamed-chunk-26-1.pdf, id=316, 562.1pt x 
+[18 <./Final-Report-May_files/figure-latex/unnamed-chunk-23-1.pdf>] [19 <./Fina
+l-Report-May_files/figure-latex/unnamed-chunk-24-1.pdf>]
+<Final-Report-May_files/figure-latex/unnamed-chunk-28-1.pdf, id=335, 562.1pt x 
 423.5825pt>
-File: Final-Report-May_files/figure-latex/unnamed-chunk-26-1.pdf Graphic file (
+File: Final-Report-May_files/figure-latex/unnamed-chunk-28-1.pdf Graphic file (
 type pdf)
-<use Final-Report-May_files/figure-latex/unnamed-chunk-26-1.pdf>
-Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-26-1
-.pdf  used on input line 438.
+<use Final-Report-May_files/figure-latex/unnamed-chunk-28-1.pdf>
+Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-28-1
+.pdf  used on input line 495.
 (pdftex.def)             Requested size: 469.75067pt x 353.99068pt.
-[18 <./Final-Report-May_files/figure-latex/unnamed-chunk-24-1.pdf>] [19 <./Fina
-l-Report-May_files/figure-latex/unnamed-chunk-26-1.pdf>]
-Overfull \hbox (92.9505pt too wide) in paragraph at lines 480--535
- [][] 
- []
-
 [20]
-<Final-Report-May_files/figure-latex/unnamed-chunk-30-1.pdf, id=354, 562.1pt x 
+<Final-Report-May_files/figure-latex/unnamed-chunk-29-1.pdf, id=341, 562.1pt x 
 424.58624pt>
+File: Final-Report-May_files/figure-latex/unnamed-chunk-29-1.pdf Graphic file (
+type pdf)
+<use Final-Report-May_files/figure-latex/unnamed-chunk-29-1.pdf>
+Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-29-1
+.pdf  used on input line 502.
+(pdftex.def)             Requested size: 469.75067pt x 354.82951pt.
+[21 <./Final-Report-May_files/figure-latex/unnamed-chunk-28-1.pdf>]
+<Final-Report-May_files/figure-latex/unnamed-chunk-30-1.pdf, id=356, 562.1pt x 
+423.5825pt>
 File: Final-Report-May_files/figure-latex/unnamed-chunk-30-1.pdf Graphic file (
 type pdf)
 <use Final-Report-May_files/figure-latex/unnamed-chunk-30-1.pdf>
 Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-30-1
-.pdf  used on input line 540.
-(pdftex.def)             Requested size: 469.75067pt x 354.82951pt.
-[21]
-<Final-Report-May_files/figure-latex/unnamed-chunk-31-1.pdf, id=360, 562.1pt x 
-423.5825pt>
-File: Final-Report-May_files/figure-latex/unnamed-chunk-31-1.pdf Graphic file (
-type pdf)
-<use Final-Report-May_files/figure-latex/unnamed-chunk-31-1.pdf>
-Package pdftex.def Info: Final-Report-May_files/figure-latex/unnamed-chunk-31-1
-.pdf  used on input line 545.
+.pdf  used on input line 509.
 (pdftex.def)             Requested size: 469.75067pt x 353.99068pt.
-[22 <./Final-Report-May_files/figure-latex/unnamed-chunk-30-1.pdf>]
-Underfull \hbox (badness 10000) in paragraph at lines 559--561
-
- []
-
-[23 <./Final-Report-May_files/figure-latex/unnamed-chunk-31-1.pdf>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 570.
+[22 <./Final-Report-May_files/figure-latex/unnamed-chunk-29-1.pdf>] [23 <./Fina
+l-Report-May_files/figure-latex/unnamed-chunk-30-1.pdf>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 517.
 [24]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 570.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 517.
 (./Final-Report-May.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 570.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 570.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 517.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 517.
 Package rerunfilecheck Info: File `Final-Report-May.out' has not changed.
-(rerunfilecheck)             Checksum: F824FA277613CFC0C9A94906EB0CE7DE;882.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 570.
+(rerunfilecheck)             Checksum: 6D74B1CDFE297C4D9FC64B42A372FDCD;991.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 517.
  ) 
 Here is how much of TeX's memory you used:
- 12719 strings out of 482605
- 190604 string characters out of 5951236
- 439435 words of memory out of 5000000
- 27923 multiletter control sequences out of 15000+600000
+ 12705 strings out of 482605
+ 190000 string characters out of 5951236
+ 433967 words of memory out of 5000000
+ 27919 multiletter control sequences out of 15000+600000
  571013 words of font info for 57 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 34i,9n,37p,349b,388s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 34i,9n,37p,715b,388s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/Users/sabamz/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/User
 s/sabamz/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}</Users/sabam
 z/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/sabamz/Li
@@ -890,10 +872,10 @@ yTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/sabamz/Library/TinyTeX/
 texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/sabamz/Library/TinyTeX/texmf
 -dist/fonts/type1/public/lm/lmtk10.pfb></Users/sabamz/Library/TinyTeX/texmf-dis
 t/fonts/type1/public/lm/lmtt10.pfb>
-Output written on Final-Report-May.pdf (24 pages, 6129187 bytes).
+Output written on Final-Report-May.pdf (24 pages, 6127873 bytes).
 PDF statistics:
- 445 PDF objects out of 1000 (max. 8388607)
- 342 compressed objects within 4 object streams
- 100 named destinations out of 1000 (max. 500000)
- 149 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 437 PDF objects out of 1000 (max. 8388607)
+ 334 compressed objects within 4 object streams
+ 90 named destinations out of 1000 (max. 500000)
+ 157 words of extra memory for PDF output out of 10000 (max. 10000000)
 

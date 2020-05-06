@@ -28,7 +28,7 @@ historical_tuition <- readr::read_csv(paste(address,'historical_tuition.csv',sep
 diversity_school <- readr::read_csv(paste(address,'diversity_school.csv',sep=""))
 ```
 
-## Introduction
+# Introduction
 
 - Many people are interested to know about the tuition, costs, diversity and potential salary when searching for college. 
 - In this project, we want to analyze:
@@ -39,6 +39,7 @@ diversity_school <- readr::read_csv(paste(address,'diversity_school.csv',sep="")
 - We have 4 datasets with 23 variables and more than 50000 observations. 
 
 
+# Analysis
 ## Diversity dataset
 
 ```{r, echo = TRUE}
@@ -376,25 +377,32 @@ grid.arrange(plot_cheap2,plot_exp2, ncol=2)
 ```
 
 ## The historical tuition dataset
-### 270 observations and  4 variables
+
+This data set has 270 observations and  4 variables. The following table shows these variables.
+
+```{r}
+historical_tuition%>%glimpse()
+```
 
 ```{r}
 knitr::kable(head(historical_tuition))%>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
+The type of college can be either public, private or all institutions and the type of tuition can be either a 2-year, 4-year or all programs. The difference between current and constant is in considering inflation.
+
 ### Data Manipulation 
-#### We observe that the data is available consistantly from 2000 till 2017. 
-```{r,tidy=TRUE}
-unique(historical_tuition$year)
-```
-#### For convinience, we will consider the end of year.
+Aftyer investigating the data, we observed that the data is available consistantly from 2000 till 2017. So we decided to just work on data after 2000. For convinience, we will represent each academic year by its end date.
+
 ```{r,tidy=TRUE,message=FALSE,warning=FALSE,tidy=TRUE}
 historical_tuition<-separate(data=historical_tuition,col = 2,c("year_begin","year_end"))%>%mutate("year_end"=as.numeric(year_begin)+1)
-unique(historical_tuition$year_end)
+historical_tuition%>%filter(year_end>=2000)%>%distinct(year_end)
 ```
 
 ### Average tuition cost over time
+
+Here, we are looking into the average annual tuition cost at U.S. colleges and universities. We see that as time goes, tuition increases. The private schools have considerably higher average than the puvlic schools.
+
 ```{r,message=FALSE,warning=FALSE,fig.width=8,fig.height=6,fig.align='center'}
 historical_tuition%>%filter(year_end>=2000,tuition_type=='All Constant')%>%
  ggplot(aes(x=factor(year_end),y=tuition_cost,group=type,color=type))+geom_line(size=0.8)+geom_point(size=1)+theme_bw()+labs(x='Acedemic year (ending)',y='Tuition cost (inflation adjusted)',title='Average annual tuition cost at U.S. colleges and universities')
@@ -402,20 +410,43 @@ historical_tuition%>%filter(year_end>=2000,tuition_type=='All Constant')%>%
 
 
 ### Tuition comparison between 2 year and 4 year programs
+
+In this plot, we are looking into the difference between 2 and 4 year programs in public and private schools in a time window of 4 years (2014-2017). It should be noted that for tuition cost the inflation has been adjusted. We do not see a big difference among 2 year programs. However, for 4-year programs we see the  average tuition has increased over time. This increase is more considerable among private schools.  
+
 ```{r,fig.width=8,fig.height=6,fig.align='center'}
 historical_tuition%>%filter(year_end>=2014,type %in% c('Private','Public'),tuition_type %in% c('4 Year Constant','2 Year Constant'))%>%ggplot()+geom_bar(aes(x=factor(year_end),y=tuition_cost,fill=tuition_type),stat="identity",position = 'dodge')+facet_wrap(~type)+theme_bw()+labs(x='Acedemic year (ending)',y='Tuition cost (inflation adjusted)',title='Public and Private tuitions among 4 year and 2 year progerams')
 ```
 
 
 ## Salary potential dataset
-### 935 observations and 6 variables including:
+
+This data set has 935 observations and 6 variables. For each university in a state, we have the information about average early/mid career pay and also the stem percent.
+
 ```{r}
-knitr::kable(head(salary_potential%>%select(-make_world_better_percent)))%>%
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+salary_potential%>%glimpse()
 ```
 
 
+
 ### Which states have the highest/least potential salary?
+
+We are interested to know which states are having highest amount of potential salary. Looking at the top 5 states we have California, New-York, Massachusetts, Pennnsylvania, and Texas with the highets salary with respect to both mid and early carrer pay.
+
+
+```{r,message=FALSE,warning=FALSE}
+knitr::kable(salary_potential%>%group_by(state_name)%>%summarise(average_mid_career_pay=mean(mid_career_pay),average_early_career_pay=mean(early_career_pay))%>%select(state_name,average_mid_career_pay)%>%arrange(desc(average_mid_career_pay))%>%ungroup()%>%top_n(n=5))%>%kableExtra::kable_styling( position = "center")
+```
+
+
+
+```{r,message=FALSE,warning=FALSE}
+knitr::kable(salary_potential%>%group_by(state_name)%>%summarise(average_mid_career_pay=mean(mid_career_pay),average_early_career_pay=mean(early_career_pay))%>%select(state_name,average_early_career_pay)%>%arrange(desc(average_early_career_pay))%>%ungroup()%>%top_n(n=5))%>%kableExtra::kable_styling( position = "center")
+```
+
+
+The following map demonstrates the potential mid carrer pay by state which approves our previous findings regarding top 5 states.
+
+
 ```{r,fig.width=8,fig.height=6,fig.align='center'}
 df<-salary_potential%>%group_by(state_name)%>%summarise(average_mid_career_pay=mean(mid_career_pay),average_early_career_pay=mean(early_career_pay))%>%mutate(region=tolower(gsub("-"," ",state_name)))%>%select(-state_name)
 gg<-ggplot()
@@ -429,25 +460,10 @@ gg <- gg + geom_map(data=df, map=us,
 gg
 ```
 
-### Top 5 states
 
-```{r,message=FALSE,warning=FALSE}
-knitr::kable(salary_potential%>%group_by(state_name)%>%summarise(average_mid_career_pay=mean(mid_career_pay),average_early_career_pay=mean(early_career_pay))%>%select(state_name,average_mid_career_pay)%>%arrange(desc(average_mid_career_pay))%>%ungroup()%>%top_n(n=5))
-```
+### Potenial salary in Iowa
 
-```{r,message=FALSE,warning=FALSE}
-knitr::kable(salary_potential%>%group_by(state_name)%>%summarise(average_mid_career_pay=mean(mid_career_pay),average_early_career_pay=mean(early_career_pay))%>%select(state_name,average_early_career_pay)%>%arrange(desc(average_early_career_pay))%>%ungroup()%>%top_n(n=5))
-```
-
-
-### Let's take a closer look at Iowa
-```{r}
-knitr::kable(salary_potential%>%filter(state_name=="Iowa")%>%select(-make_world_better_percent)%>%arrange(rank))%>%
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
-```
-
-
-### In Iowa, ISU has the highest potential salary 
+We are interested to know which university has the highest potential salary in Iowa. The following figure demonstrates mid carrer pay across different universities. We see that ISU has the highest potential salary in Iowa.
 
 ```{r,message=FALSE,fig.width=8,fig.height=6,fig.align='center'}
 salary_potential%>%filter(state_name=="Iowa")%>%select(rank,name,mid_career_pay)%>%ggplot()+
@@ -457,6 +473,9 @@ salary_potential%>%filter(state_name=="Iowa")%>%select(rank,name,mid_career_pay)
 
 
 ### What is average stem percent across different states?
+
+Here, we explore the stem percent across different states. It is interesting that the states which had higher amount of potential salary are also the ones with higher stem percent. 
+
 ```{r,fig.width=8,fig.height=6,fig.align='center'}
 # salary_potential%>%group_by(state_name)%>%summarise(average_stem_percent=mean(stem_percent))%>%ggplot()+geom_bar(aes(x=fct_reorder(factor(state.name),average_stem_percent),y=average_stem_percent,fill=average_stem_percent),stat="identity")+coord_flip()+labs(x="Average stem percent",y="State",title="Stem percent across different states")+ theme_bw()+theme(legend.position = "none")
 dfstem<-salary_potential%>%group_by(state_name)%>%summarise(average_stem_percent=mean(stem_percent))%>%mutate(region=tolower(gsub("-"," ",state_name)))
@@ -471,15 +490,9 @@ gg <- gg + geom_map(data=dfstem, map=us,
 gg
 ```
 
-## Conclusions
+# Conclusions
 
-- The map of diversity across the US indicates that the US colleges are not equally diverse geographically.
-- There is relationship between different diversity groups, tuition and early career salary.
-- Average out-of-state tuition differs across the country while average in-state tuition remains almost the same.
-- East coast colleges are more expensive in terms of in-state and out-of-state tuition.  
-- Massachusetts has the highest in-state tuition.
-- Private schools cost more than public schools.
-- Historical trend of tuition showed that tuition is increasing over time.
-- Universities located in west/east coast have higher stem percent and also higher potential salary.
+In this project, we worked with different datasets related to college tuition, diversity and potential salary. We applied different techniques such as mergeing, reshaping, removing missing values and worked with different types of data including categorical, continuous and data time variables. We demonstrated different ideas through visualizations in R. Specifically, we observe that the US colleges are not equally diverse geographically 
+and there is relationship between different diversity groups, tuition and early career salary. We also find out that the average out-of-state tuition differs across the country while average in-state tuition remains almost the same and east coast colleges are more expensive in terms of in-state and out-of-state tuition. Furthermore, we explored the historical tuition and observed that private schools cost more than public schools. The historical trend of tuition showed that tuition is increasing over time. The last data set that we investigated was the potential salary data which showed universities located in west/east coast have higher stem percent and also higher potential salary.
 
 
