@@ -228,6 +228,8 @@ ggplot(diversity_salary, aes(x = pct_category, y = early_career_pay, color=categ
 
 ### Different types of colleges in US
 
+There are different types of colleges enrolling students across the country. According to this data set, three types of colleges are recognizable: public, private, and for profit. As shown in the following plot, public colleges are the majority category with 53 percent of all colleges and private and for-profit colleges are following public collages with 43 and 4 percent, respectively.
+
 ```{r}
 library(forcats)
 tuition_cost %>% filter(type!="Other") %>% group_by(type) %>% summarise(n=n()) %>% mutate(per=round(n/sum(n),2)) %>% ggplot(aes(x=fct_reorder(type,per), y=per,fill=as.factor(type)))+ geom_bar(stat="identity") +labs(y="Percentage of college ",x="Type")+
@@ -236,6 +238,8 @@ tuition_cost %>% filter(type!="Other") %>% group_by(type) %>% summarise(n=n()) %
 ```
 
 ### How many colleges are there in each state?
+
+In this part, we explore the number of colleges in different states. According to the following plot, the top 5 states are California, New York, Pennsylvania, Texas, and Ohio. Rhode Island, Nevada, Delaware, Wyoming, and Alaska are the states with the least number of colleges. Iowa is ranked 19th in the country with 52 collages.
 
 ```{r, fig.width=10,fig.height=8}
 tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% summarise(n=n()) %>% ggplot(aes(x=fct_reorder(state,n), y=n,fill=as.factor(state)))+ geom_bar(position = 'dodge',stat="identity") +labs(y="Number of college ",x="Type")+
@@ -246,6 +250,9 @@ tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% summarise(n=n(
 
 
 ### Comparing different states in terms of in state and out of state tuition
+Which states have a higher rate of tuition costs? This is a question that most students are interested to find an answer to it when they are going to choose a college to continue their studies. This section provides a comparison for in/out-of-state tuition in different states. As can be seen in the left boxplot Massachusetts is the most expensive state on average in terms of in-state tuition. On the other hand, North Carolina, Arizona, and New Mexico are the cheapest states on average for those who intend to pay in-state tuition.
+
+Same comparison is done for out-of-state tuition in right boxplot. This plot shows that Vermont has the largest out-of-state tuition cost on average and New Mexico is the most affordable state.
 
 ```{r,fig.width=10,fig.height=8}
 plot_in<-tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,in_state_tuition), y=in_state_tuition,fill=as.factor(state))) +
@@ -265,6 +272,8 @@ grid.arrange(plot_in, plot_out, ncol=2)
 
 
 ### Comparing in/out-of state tuition
+
+This section compares the difference between in/out-of-state tuition in different states. As can be seen in the following plots, the cost difference of in/out-of-state tuition in Colorado is larger compared to other states. One interesting point in boxplot is the median of difference with zero value for some states. This shows that in these states the average in-state tuition is equal to average out-of-state tuition. 
 
 ```{r,fig.width=10,fig.height=8}
 plot_in_out1<-tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,tuition_diff_in_out), y=tuition_diff_in_out,fill=as.factor(state))) +
@@ -288,6 +297,8 @@ grid.arrange(plot_in_out1, plot_in_out2, ncol=2)
 
 ### In-state tuition, different type of colleges; What is the relationship?
 
+Let's take a closer look at the geographical distribution of average in-state tuition costs for different types of collages in the US. The following plots illustrate the distribution of average tuition costs on the US map. As can be seen, average tuition cost varies in different states for private and for-profit colleges. However, this statistic remains almost the same for public colleges across the country. It should be mentioned that white color in maps means that data is unavailable for the corresponding college type.
+
 ```{r}
 summary_in_state<- tuition_cost %>% filter(!is.na(state)) %>% filter(type!="Other") %>% group_by(state,type) %>% summarise(mean_in_tu=mean(in_state_tuition)) %>% 
   mutate(region=tolower(state))
@@ -306,6 +317,8 @@ gg
 
 ### Out-of-state tuition, different type of colleges; What is the relationship?
 
+The following plots provide the same analysis for the out-of-state tuition cost. The interesting point is the larger variation of average out-of-state tuition costs in different states.
+
 ```{r}
 summary_out_state<- tuition_cost %>% filter(!is.na(state)) %>% filter(type!="Other") %>% group_by(state,type) %>% summarise(mean_out_tu=mean(out_of_state_tuition)) %>% 
   mutate(region=tolower(state))
@@ -323,6 +336,8 @@ gg
 ```
 
 ### The chepeast/most expensive colleges with out-of-state tuition
+
+"Which one is the cheapest one?" or "which one is the most expensive one?" always are interesting questions. This section provides some insights and helps us to answer these two questions. According to the following plots, Haskell Indian Nations University is the cheapest college in the US, and Columbia University is the most expensive college in terms of out-of-state tuition costs.
 
 ```{r,fig.width=12,fig.height=6}
 plot_exp<-tuition_cost %>% group_by(name) %>%
@@ -352,6 +367,8 @@ grid.arrange(plot_cheap,plot_exp, ncol=2)
 
 
 #### The cheapest/most expensive colleges with in-state tuition
+
+This section addresses the two questions of the previous section, this time for in-state tuition. According to the following bar charts, the cheapest and the most expensive colleges are the same as ou-of state tuition. The reason is that in-state tuition costs and out-of-state tuition costs are equal at Haskell Indian Nations University and Columbia University.
 
 ```{r,fig.width=12,fig.height=6}
 plot_exp2<-tuition_cost %>% group_by(name) %>%
@@ -475,7 +492,7 @@ gg
 
 - The map of diversity across the US indicates that the US colleges are not equally diverse geographically.
 - There is relationship between different diversity groups, tuition and early career salary.
-- Average out-of-state tuition differs across the country while average in-state tuition remains almost the same.
+- Average out-of-state tuition for public collags differs across the country while average in-state tuition remains almost the same.
 - East coast colleges are more expensive in terms of in-state and out-of-state tuition.  
 - Massachusetts has the highest in-state tuition.
 - Private schools cost more than public schools.
