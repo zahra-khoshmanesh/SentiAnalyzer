@@ -473,12 +473,12 @@ gg
 ## Conclusions
 
 - The map of diversity across the US indicates that the US colleges are not equally diverse geographically.
-- There are some relationship between different diversity groups and tuition and early career salary.
-- Average out of state tuition differs across the country while in state tuition in different states is almost same on average
-- East coast colleges are more expensive in terms of in state and out of state tuition  
-- Massachusetts has the highest in state tuition
-- Private schools cost more than public schools
-- Historical trend of tuition showed that tuition is increasing over time
-- Universities located in west/east cost have higher stem percent and also higher potential salary
+- There is relationship between different diversity groups, tuition and early career salary.
+- Average out-of-state tuition differs across the country while average in-state tuition remains almost the same.
+- East coast colleges are more expensive in terms of in-state and out-of-state tuition.  
+- Massachusetts has the highest in-state tuition.
+- Private schools cost more than public schools.
+- Historical trend of tuition showed that tuition is increasing over time.
+- Universities located in west/east coast have higher stem percent and also higher potential salary.
 
 
