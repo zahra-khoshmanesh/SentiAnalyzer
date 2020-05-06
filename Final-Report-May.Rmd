@@ -1,0 +1,485 @@
+---
+title: College tuition, diversity, and pay
+author: "Zahra Khoshmanesh, Vahid Azizi, and Saba Moeinizade"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+header-includes:
+   - \usepackage{setspace}
+   - \doublespacing
+output:
+  bookdown::pdf_document2: default
+fontsize: 11pt  
+indent: true 
+---
+
+
+```{r setup, include=FALSE,tidy=TRUE,fig.align = 'center'}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(lubridate)
+library(gridExtra)
+library(forcats)
+options(warn=-1)  #warning off
+us <- map_data("state")
+address<-c('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-10/')
+tuition_cost <- readr::read_csv(paste(address,'tuition_cost.csv',sep=""))
+tuition_income <- readr::read_csv(paste(address,'tuition_income.csv',sep=""))
+salary_potential <- readr::read_csv(paste(address,'salary_potential.csv',sep=""))
+historical_tuition <- readr::read_csv(paste(address,'historical_tuition.csv',sep=""))
+diversity_school <- readr::read_csv(paste(address,'diversity_school.csv',sep=""))
+```
+
+## Introduction
+
+- Many people are interested to know about the tuition, costs, diversity and potential salary when searching for college. 
+- In this project, we want to analyze:
+ 1. Diversity among schools across US
+ 2. Tuition costs across different states
+ 3. Historical trends of tuition
+ 4. Average potential salary for graduates from different universities
+- We have 4 datasets with 23 variables and more than 50000 observations. 
+
+
+## Diversity dataset
+
+```{r, echo = TRUE}
+diversity_school %>% glimpse()
+```
+
+```{r}
+knitr::kable(head(diversity_school))%>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+### Bar chart of all diversity categories and ethnicity groups in the US colledge
+
+```{r,message=FALSE,fig.width=12,fig.height=8,fig.align='center'}
+
+plot1 <- diversity_school %>% dplyr::group_by(category) %>% dplyr::summarise(count=sum(enrollment)) %>% 
+  ggplot(aes(x=fct_reorder(category,count), y=count,fill=as.factor(category)))+ geom_bar(stat="identity") +labs(y="number of enrollment ",x="category")+
+  geom_text(aes(label=count), position=position_dodge(width=0.9), vjust=-0.25)+
+  ggplot2::coord_flip() +
+  theme(legend.position = "none") +
+  ggplot2::ggtitle("All diversity groups in the US college")
+
+plot2 <- diversity_school %>% dplyr::group_by(category) %>% dplyr::summarise(count=sum(enrollment)) %>% 
+  dplyr:: filter(category %in% c("Asian","Hispanic","White","Black","Two Or More Races" ,
+                                 "American Indian / Alaska Native","Native Hawaiian / Pacific Islander" )) %>% 
+  ggplot(aes(x=fct_reorder(category,count), y=count,fill=as.factor(category)))+ geom_bar(stat="identity") +labs(y="number of enrollment ",x="category")+
+  geom_text(aes(label=count), position=position_dodge(width=0.9), vjust=-0.25)+
+  ggplot2::coord_flip() +
+  theme(legend.position = "none")+
+  ggplot2::ggtitle("Ethnicity groups in the US college")
+
+grid.arrange(plot1, plot2, ncol=2)
+
+```
+
+
+
+### Finding the most diverse campus for each diversity category
+
+```{r}
+max_per_category <- diversity_school %>% 
+  mutate(eroll_rate_category=(enrollment/total_enrollment)*100) %>% 
+  group_by(category) %>% 
+  summarise(university_name=name[which.max(eroll_rate_category)],
+            state=state[which.max(eroll_rate_category)],
+            enrollment_rate=eroll_rate_category[which.max(eroll_rate_category)],
+            total_enroll=total_enrollment[which.max(eroll_rate_category)],
+            category_enroll=enrollment[which.max(eroll_rate_category)])
+knitr::kable(max_per_category)%>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+### Finding the most diverse campus for each diversity category
+
+
+```{r,fig.width=10,fig.height=8,fig.align='center'}
+max_per_category %>% 
+  ggplot(aes(x=category,y=enrollment_rate,fill=university_name,label=state)) +
+  geom_col() +
+  geom_text(nudge_y = -12) +
+  coord_flip()
+```
+
+### Diversity map of the US for each diversity group
+
+
+```{r,fig.width=15,fig.height=10,fig.align='center'}
+white <- diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  arrange(desc(mean_enrollment_rate))
+white_diversity <- white %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(state))
+gg <- ggplot()
+gg <- gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=white_diversity, map=us,
+                    aes(fill=mean_enrollment_rate, map_id=region),
+                    color="#ffffff", size=0.15)
+gg <- gg + scale_fill_continuous(low='thistle2', high='darkred', 
+                                 guide='colorbar')
+gg <- gg + labs(x=NULL, y=NULL)
+gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+gg <- gg + theme(panel.border = element_blank())
+gg <- gg + theme(panel.background = element_blank())
+gg <- gg + theme(axis.ticks = element_blank())
+gg <- gg + theme(axis.text = element_blank()) + ggtitle("Diversity categories across the US") +facet_wrap(~category)
+gg
+```
+
+### Women enrollment rate across the US
+
+```{r,fig.width=10,fig.height=8,message=FALSE,fig.align='center'}
+diversity_school %>%
+  group_by(state,category) %>% 
+  mutate(enrollment_rate=round((enrollment/total_enrollment),2)*100) %>% 
+  summarise(mean_enrollment_rate=mean(enrollment_rate)) %>% 
+  filter(category %in% c("Women"),state != "NA") %>% 
+  arrange(desc(mean_enrollment_rate)) %>% 
+  ggplot() +
+  geom_bar(aes(x = reorder(state,mean_enrollment_rate), weight = mean_enrollment_rate, fill = state), show.legend = FALSE) +
+  facet_grid(category~.) +
+  coord_flip() +
+  labs(x="", y="")
+```
+
+
+## Tuition cost dataset
+
+```{r, echo = TRUE}
+tuition_cost %>% glimpse()
+```
+
+### Merge tuition cost dataset and diversity dataset
+
+- We are interested to know whether there is any correlation between enrollment rate and each diversity group
+- We have done analysis for both in state and out of state tuition in the next slides
+
+
+### Relationship between enrollment rate and in-state-tuition per each diversity group
+
+```{r,message=FALSE,fig.width=15,fig.height=8,fig.align='center'}
+diversity_tuition <- diversity_school %>% 
+    left_join(tuition_cost, by = "name") %>%
+    mutate(pct_category = enrollment / total_enrollment)
+
+ggplot(diversity_tuition, aes(x = pct_category, y = in_state_tuition,color=category)) +
+    geom_point(alpha = 0.5) +
+    geom_smooth(method = "lm") +
+    facet_wrap(~category) +
+    scale_x_continuous(labels = scales::percent) +
+    labs(x = "% group/racial/gender category representation",
+         y = "in_state_tuition",
+         title = "Relationship between group/racial/gender category and in_state_tuition") +
+    theme_minimal() +
+    theme(text = element_text(size=16))
+
+```
+
+### Relationship between enrollment rate and out-of-state tuition per each diversity group
+
+```{r,message=FALSE,fig.width=15,fig.height=8,fig.align='center'}
+
+diversity_tuition <- diversity_school %>% 
+    left_join(tuition_cost, by = "name") %>%
+    mutate(pct_category = enrollment / total_enrollment)
+
+ggplot(diversity_tuition, aes(x = pct_category, y = out_of_state_tuition, color=category)) +
+    geom_point(alpha = 0.5) +
+    geom_smooth(method = "lm") +
+    facet_wrap(~category) +
+    scale_x_continuous(labels = scales::percent) +
+    labs(x = "% group/racial/gender category representation",
+         y = "out_of_state_tuition",
+         title = "Relationship between group/racial/gender category and out_of_state_tuition") +
+    theme_minimal() +
+    theme(text = element_text(size=16))
+
+```
+
+### Relationship between diversity groups enrollment rate and early career salary
+- we need to merge diversity dataset and salary dataset.
+
+```{r,message=FALSE,fig.width=15,fig.height=8,fig.align='center'}
+
+diversity_salary <- diversity_school %>% 
+    left_join(salary_potential, by = "name") %>%
+    mutate(pct_category = enrollment / total_enrollment)
+
+ggplot(diversity_salary, aes(x = pct_category, y = early_career_pay, color=category)) +
+    geom_point(alpha = 0.5) +
+    geom_smooth(method = "lm") +
+    facet_wrap(~category) +
+    scale_x_continuous(labels = scales::percent) +
+    labs(x = "% group/racial/gender category representation",
+         y = "Early career pay",
+         title = "Relationship between group/racial/gender category and early career salary potential") +
+    theme_minimal() +
+    theme(text = element_text(size=16))
+
+
+```
+
+
+### Different types of colleges in US
+
+```{r}
+library(forcats)
+tuition_cost %>% filter(type!="Other") %>% group_by(type) %>% summarise(n=n()) %>% mutate(per=round(n/sum(n),2)) %>% ggplot(aes(x=fct_reorder(type,per), y=per,fill=as.factor(type)))+ geom_bar(stat="identity") +labs(y="Percentage of college ",x="Type")+
+  geom_text(aes(label=per), position=position_dodge(width=0.9), vjust=-0.25)+
+  theme(legend.position = "none")
+```
+
+### How many colleges are there in each state?
+
+```{r, fig.width=10,fig.height=8}
+tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% summarise(n=n()) %>% ggplot(aes(x=fct_reorder(state,n), y=n,fill=as.factor(state)))+ geom_bar(position = 'dodge',stat="identity") +labs(y="Number of college ",x="Type")+
+  geom_text(aes(label=n), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip()+
+  theme(legend.position = "none")
+```
+
+
+### Comparing different states in terms of in state and out of state tuition
+
+```{r,fig.width=10,fig.height=8}
+plot_in<-tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,in_state_tuition), y=in_state_tuition,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="In state tuition")+
+  theme(legend.position = "none")
+
+plot_out<-tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,out_of_state_tuition), y=out_of_state_tuition,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="Out of state tuition")+
+  theme(legend.position = "none")
+grid.arrange(plot_in, plot_out, ncol=2)
+```
+
+
+
+### Comparing in/out-of state tuition
+
+```{r,fig.width=10,fig.height=8}
+plot_in_out1<-tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,tuition_diff_in_out), y=tuition_diff_in_out,fill=as.factor(state))) +
+  geom_boxplot()+
+  coord_flip() +
+  labs(x="State",y="Difference in/out tution")+
+  theme(legend.position = "none") 
+
+plot_in_out2<-tuition_cost[!is.na(tuition_cost$state),] %>% mutate(tuition_diff_in_out=out_of_state_tuition-in_state_tuition) %>% group_by(state) %>%
+  summarise(mean_diff=round(mean(tuition_diff_in_out),2)) %>%
+  ggplot(aes(x=fct_reorder(state,mean_diff), y=mean_diff,fill=as.factor(state))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=mean_diff), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(x="State",y="Mean difference in/out tution")+
+  theme(legend.position = "none") 
+grid.arrange(plot_in_out1, plot_in_out2, ncol=2)
+```
+
+
+
+### In-state tuition, different type of colleges; What is the relationship?
+
+```{r}
+summary_in_state<- tuition_cost %>% filter(!is.na(state)) %>% filter(type!="Other") %>% group_by(state,type) %>% summarise(mean_in_tu=mean(in_state_tuition)) %>% 
+  mutate(region=tolower(state))
+gg<-ggplot()
+gg<-gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=summary_in_state, map=us,
+                    aes(fill=mean_in_tu, map_id=region),
+                    color="#ffffff", size=0.15) +
+  labs(title = "Mean in-state tuition of colleges in U.S. States",
+    fill = "Mean Tuition") +scale_fill_viridis_c(option = "plasma",direction = -1) +
+  facet_wrap(~type,ncol = 2)
+gg 
+```
+
+### Out-of-state tuition, different type of colleges; What is the relationship?
+
+```{r}
+summary_out_state<- tuition_cost %>% filter(!is.na(state)) %>% filter(type!="Other") %>% group_by(state,type) %>% summarise(mean_out_tu=mean(out_of_state_tuition)) %>% 
+  mutate(region=tolower(state))
+gg<-ggplot()
+gg<-gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=summary_out_state, map=us,
+                    aes(fill=mean_out_tu, map_id=region),
+                    color="#ffffff", size=0.15) +
+  labs(title = "Mean out-of-state tuition of colleges in U.S. States",
+    fill = "Mean Tuition") +scale_fill_viridis_c(option = "plasma",direction = -1) +
+  facet_wrap(~type,ncol = 2)
+gg
+```
+
+### The chepeast/most expensive colleges with out-of-state tuition
+
+```{r,fig.width=12,fig.height=6}
+plot_exp<-tuition_cost %>% group_by(name) %>%
+  summarise(max_out_tuition=max(out_of_state_tuition)) %>% arrange(desc(max_out_tuition)) %>% top_n(10,wt=max_out_tuition) %>%
+  ggplot(aes(x=fct_reorder(name,max_out_tuition), y=max_out_tuition,fill=as.factor(name))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=max_out_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(y="Tuition cost",x="",title = "Top 10 most expensive colleges") +
+  theme(legend.position = "none") 
+
+
+plot_cheap<-tuition_cost %>% group_by(name) %>%
+  summarise(min_out_tuition=min(out_of_state_tuition)) %>% arrange(min_out_tuition) %>% 
+  top_n(-10,wt=min_out_tuition) %>% 
+  ggplot(aes(x=fct_reorder(name,min_out_tuition,.desc=TRUE), y=min_out_tuition,fill=as.factor(name))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=min_out_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(y="Tuition cost",x="",title = "Top 10 cheapest colleges") +
+  theme(legend.position = "none")
+
+grid.arrange(plot_cheap,plot_exp, ncol=2)
+
+```
+
+
+
+#### The cheapest/most expensive colleges with in-state tuition
+
+```{r,fig.width=12,fig.height=6}
+plot_exp2<-tuition_cost %>% group_by(name) %>%
+  summarise(max_in_tuition=max(in_state_tuition)) %>% arrange(desc(max_in_tuition)) %>% top_n(10,wt=max_in_tuition) %>%
+  ggplot(aes(x=fct_reorder(name,max_in_tuition), y=max_in_tuition,fill=as.factor(name))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=max_in_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(y="Tuition cost",x="",title = "Top 10 most expensive colleges with in state tuition") +
+  theme(legend.position = "none") 
+
+plot_cheap2<-tuition_cost %>% group_by(name) %>%
+  summarise(min_in_tuition=min(in_state_tuition)) %>% arrange(min_in_tuition) %>% 
+  top_n(-10,wt=min_in_tuition) %>% 
+  ggplot(aes(x=fct_reorder(name,min_in_tuition,.desc=TRUE), y=min_in_tuition,fill=as.factor(name))) +
+  geom_bar(stat="identity")+
+  geom_text(aes(label=min_in_tuition), position=position_dodge(width=.3),hjust=1, vjust=.4)+
+  coord_flip() +
+  labs(y="Tuition cost",x="",title = "Top 10 cheapest colleges with in state tuition") +
+  theme(legend.position = "none") 
+grid.arrange(plot_cheap2,plot_exp2, ncol=2)
+```
+
+## The historical tuition dataset
+### 270 observations and  4 variables
+
+```{r}
+knitr::kable(head(historical_tuition))%>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+### Data Manipulation 
+#### We observe that the data is available consistantly from 2000 till 2017. 
+```{r,tidy=TRUE}
+unique(historical_tuition$year)
+```
+#### For convinience, we will consider the end of year.
+```{r,tidy=TRUE,message=FALSE,warning=FALSE,tidy=TRUE}
+historical_tuition<-separate(data=historical_tuition,col = 2,c("year_begin","year_end"))%>%mutate("year_end"=as.numeric(year_begin)+1)
+unique(historical_tuition$year_end)
+```
+
+### Average tuition cost over time
+```{r,message=FALSE,warning=FALSE,fig.width=8,fig.height=6,fig.align='center'}
+historical_tuition%>%filter(year_end>=2000,tuition_type=='All Constant')%>%
+ ggplot(aes(x=factor(year_end),y=tuition_cost,group=type,color=type))+geom_line(size=0.8)+geom_point(size=1)+theme_bw()+labs(x='Acedemic year (ending)',y='Tuition cost (inflation adjusted)',title='Average annual tuition cost at U.S. colleges and universities')
+```
+
+
+### Tuition comparison between 2 year and 4 year programs
+```{r,fig.width=8,fig.height=6,fig.align='center'}
+historical_tuition%>%filter(year_end>=2014,type %in% c('Private','Public'),tuition_type %in% c('4 Year Constant','2 Year Constant'))%>%ggplot()+geom_bar(aes(x=factor(year_end),y=tuition_cost,fill=tuition_type),stat="identity",position = 'dodge')+facet_wrap(~type)+theme_bw()+labs(x='Acedemic year (ending)',y='Tuition cost (inflation adjusted)',title='Public and Private tuitions among 4 year and 2 year progerams')
+```
+
+
+## Salary potential dataset
+### 935 observations and 6 variables including:
+```{r}
+knitr::kable(head(salary_potential%>%select(-make_world_better_percent)))%>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+
+### Which states have the highest/least potential salary?
+```{r,fig.width=8,fig.height=6,fig.align='center'}
+df<-salary_potential%>%group_by(state_name)%>%summarise(average_mid_career_pay=mean(mid_career_pay),average_early_career_pay=mean(early_career_pay))%>%mutate(region=tolower(gsub("-"," ",state_name)))%>%select(-state_name)
+gg<-ggplot()
+gg<-gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=df, map=us,
+                    aes(fill=average_mid_career_pay, map_id=region),
+                    color="#ffffff", size=0.15) +labs(title = 'Potential mid career pay by state')+
+  scale_fill_viridis_c(option = "B",direction = -1)+theme_bw()
+gg
+```
+
+### Top 5 states
+
+```{r,message=FALSE,warning=FALSE}
+knitr::kable(salary_potential%>%group_by(state_name)%>%summarise(average_mid_career_pay=mean(mid_career_pay),average_early_career_pay=mean(early_career_pay))%>%select(state_name,average_mid_career_pay)%>%arrange(desc(average_mid_career_pay))%>%ungroup()%>%top_n(n=5))
+```
+
+```{r,message=FALSE,warning=FALSE}
+knitr::kable(salary_potential%>%group_by(state_name)%>%summarise(average_mid_career_pay=mean(mid_career_pay),average_early_career_pay=mean(early_career_pay))%>%select(state_name,average_early_career_pay)%>%arrange(desc(average_early_career_pay))%>%ungroup()%>%top_n(n=5))
+```
+
+
+### Let's take a closer look at Iowa
+```{r}
+knitr::kable(salary_potential%>%filter(state_name=="Iowa")%>%select(-make_world_better_percent)%>%arrange(rank))%>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+
+### In Iowa, ISU has the highest potential salary 
+
+```{r,message=FALSE,fig.width=8,fig.height=6,fig.align='center'}
+salary_potential%>%filter(state_name=="Iowa")%>%select(rank,name,mid_career_pay)%>%ggplot()+
+  geom_bar(aes(x=fct_reorder(factor(name),mid_career_pay),y=mid_career_pay,fill=mid_career_pay),stat='identity',position = 'dodge')+coord_flip()+
+  labs(x="University",y="Mid career pay",title="Potential salary among universities in Iowa")+theme_bw()
+```
+
+
+### What is average stem percent across different states?
+```{r,fig.width=8,fig.height=6,fig.align='center'}
+# salary_potential%>%group_by(state_name)%>%summarise(average_stem_percent=mean(stem_percent))%>%ggplot()+geom_bar(aes(x=fct_reorder(factor(state.name),average_stem_percent),y=average_stem_percent,fill=average_stem_percent),stat="identity")+coord_flip()+labs(x="Average stem percent",y="State",title="Stem percent across different states")+ theme_bw()+theme(legend.position = "none")
+dfstem<-salary_potential%>%group_by(state_name)%>%summarise(average_stem_percent=mean(stem_percent))%>%mutate(region=tolower(gsub("-"," ",state_name)))
+gg<-ggplot()
+gg<-gg + geom_map(data=us, map=us,
+                    aes(x=long, y=lat, map_id=region),
+                    fill="#ffffff", color="#ffffff", size=0.15)
+gg <- gg + geom_map(data=dfstem, map=us,
+                    aes(fill=average_stem_percent, map_id=region),
+                    color="#ffffff", size=0.15) +labs(title = 'Stem percent across different states')+
+  scale_fill_viridis_c(option = "D",direction = -1)+theme_bw()
+gg
+```
+
+## Conclusions
+
+- The map of diversity across the US indicates that the US colleges are not equally diverse geographically.
+- There is relationship between different diversity groups, tuition and early career salary.
+- Average out-of-state tuition differs across the country while average in-state tuition remains almost the same.
+- East coast colleges are more expensive in terms of in-state and out-of-state tuition.  
+- Massachusetts has the highest in-state tuition.
+- Private schools cost more than public schools.
+- Historical trend of tuition showed that tuition is increasing over time.
+- Universities located in west/east coast have higher stem percent and also higher potential salary.
+
+
