@@ -30,54 +30,66 @@ diversity_school <- readr::read_csv(paste(address,'diversity_school.csv',sep="")
 
 # Introduction
 
-- Many people are interested to know about the tuition, costs, diversity and potential salary when searching for college. 
-- In this project, we want to analyze:
- 1. Diversity among schools across US
- 2. Tuition costs across different states
- 3. Historical trends of tuition
- 4. Average potential salary for graduates from different universities
-- We have 4 datasets with 23 variables and more than 50000 observations. 
+Many people are interested to know about the tuition, costs, diversity and potential salary when searching for college. In this project, we want to analyze tuition costs across different states, and explore diversity in different schools. We have 4 datasets with 23 variables and more than 50000 observations. The variables include different information such as school name, state, type of school, in-state/out-of-state tuition, group/racial/gender category, early/mid-career pay, stem percent and historical tuition information. We are also interested in trends of tuition over time. We will use different summary statistics and visualizations in R to address these problems.
 
 
 # Analysis
+
+We start our analysis with exploring the diversity dataset.
+
 ## Diversity dataset
+
+In diversity dataset, each row describes a specific university or colledge in US in terms of enrollment per each diversity group which can be either ethnicity, women, or minority groups.
 
 ```{r, echo = TRUE}
 diversity_school %>% glimpse()
 ```
 
+Let's check the different diversity groups provided in this dataset.
+
 ```{r}
-knitr::kable(head(diversity_school))%>%
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+unique(diversity_school$category)
+
 ```
 
-### Bar chart of all diversity categories and ethnicity groups in the US colledge
+### Enrollement rate across different diversity groups 
 
-```{r,message=FALSE,fig.width=12,fig.height=8,fig.align='center'}
+We are interseted to know the total enrollment across different diversity groups in our dataset. The following figure demonstrates total enrollement across different avaialble diversity groups. Women have the first rank of enrollment among all diversity groups. 
 
-plot1 <- diversity_school %>% dplyr::group_by(category) %>% dplyr::summarise(count=sum(enrollment)) %>% 
+```{r,message=FALSE,fig.width=6,fig.height=5,fig.align='center'}
+
+diversity_school %>% dplyr::group_by(category) %>% dplyr::summarise(count=sum(enrollment)) %>% 
   ggplot(aes(x=fct_reorder(category,count), y=count,fill=as.factor(category)))+ geom_bar(stat="identity") +labs(y="number of enrollment ",x="category")+
-  geom_text(aes(label=count), position=position_dodge(width=0.9), vjust=-0.25)+
+  geom_text(aes(label=count), position=position_dodge(width=0.1), vjust=-0.25) +
   ggplot2::coord_flip() +
   theme(legend.position = "none") +
-  ggplot2::ggtitle("All diversity groups in the US college")
+  ggplot2::ggtitle("All diversity groups")+theme(text = element_text(size = 9))
 
-plot2 <- diversity_school %>% dplyr::group_by(category) %>% dplyr::summarise(count=sum(enrollment)) %>% 
+
+```
+
+The following figure focuses on the ethnicity groups only. As we can see the white ethnicity group has the highest enrollemnet rate and Native Hawaian has the lowest rate.
+
+
+```{r,message=FALSE,fig.width=6,fig.height=5,fig.align='center',size=1}
+diversity_school %>% dplyr::group_by(category) %>% dplyr::summarise(count=sum(enrollment)) %>% 
   dplyr:: filter(category %in% c("Asian","Hispanic","White","Black","Two Or More Races" ,
                                  "American Indian / Alaska Native","Native Hawaiian / Pacific Islander" )) %>% 
   ggplot(aes(x=fct_reorder(category,count), y=count,fill=as.factor(category)))+ geom_bar(stat="identity") +labs(y="number of enrollment ",x="category")+
-  geom_text(aes(label=count), position=position_dodge(width=0.9), vjust=-0.25)+
+  geom_text(aes(label=count), position=position_dodge(width=0.1), vjust=-0.25)+
   ggplot2::coord_flip() +
   theme(legend.position = "none")+
-  ggplot2::ggtitle("Ethnicity groups in the US college")
-
-grid.arrange(plot1, plot2, ncol=2)
+  ggplot2::ggtitle("Ethnicity groups")+theme(text = element_text(size = 9))
 
 ```
+ 
 
 
 
 ### Finding the most diverse campus for each diversity category
+
+In the below dataframe, we extract the name of university that has the highest enrollment per each diversity group. For example, Haskell Indian University in Kansas has 100 enrollment rate all belong to Native American.
 
 ```{r}
 max_per_category <- diversity_school %>% 
@@ -88,12 +100,11 @@ max_per_category <- diversity_school %>%
             enrollment_rate=eroll_rate_category[which.max(eroll_rate_category)],
             total_enroll=total_enrollment[which.max(eroll_rate_category)],
             category_enroll=enrollment[which.max(eroll_rate_category)])
-knitr::kable(max_per_category)%>%
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+max_per_category
 ```
 
-### Finding the most diverse campus for each diversity category
-
+We can also visualize this information using a bar chart as follows. 
 
 ```{r,fig.width=10,fig.height=8,fig.align='center'}
 max_per_category %>% 
@@ -103,7 +114,11 @@ max_per_category %>%
   coord_flip()
 ```
 
-### Diversity map of the US for each diversity group
+### Diversity map of US for each diversity group
+
+Next, we are interested to know about diversity across different states in US. The following map is provided per each diversity group and the darker colors show places that have greater enrollment rate belong to the corresponding category. 
+As we can see, the Black diversity group are mostly located in south east of US. In the same logic, midwest shows the higher enrollment of white people and California has the highest enrollment rate of Asian.
+
 
 
 ```{r,fig.width=15,fig.height=10,fig.align='center'}
@@ -129,11 +144,13 @@ gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45)
 gg <- gg + theme(panel.border = element_blank())
 gg <- gg + theme(panel.background = element_blank())
 gg <- gg + theme(axis.ticks = element_blank())
-gg <- gg + theme(axis.text = element_blank()) + ggtitle("Diversity categories across the US") +facet_wrap(~category)
+gg <- gg + theme(axis.text = element_blank()) + ggtitle("Diversity categories across the US") +facet_wrap(~category)+theme(text = element_text(size = 9))
 gg
 ```
 
-### Women enrollment rate across the US
+### Women enrollment rate across US
+
+For women, the enrollment rate of all state seems equally distributed. Virginia (with rate of 65) has the highest enrollment rate and New Jercey has the lowest rank compared to the other states (with rate of 50).
 
 ```{r,fig.width=10,fig.height=8,message=FALSE,fig.align='center'}
 diversity_school %>%
@@ -146,23 +163,21 @@ diversity_school %>%
   geom_bar(aes(x = reorder(state,mean_enrollment_rate), weight = mean_enrollment_rate, fill = state), show.legend = FALSE) +
   facet_grid(category~.) +
   coord_flip() +
-  labs(x="", y="")
+  labs(x="", y="")+theme(text = element_text(size = 9))
 ```
 
 
 ## Tuition cost dataset
 
+Our next dataset is the tuition cost. In this dataset, we have information regarding in-state , and out-of-state tuition for each university.
+
 ```{r, echo = TRUE}
 tuition_cost %>% glimpse()
 ```
 
-### Merge tuition cost dataset and diversity dataset
+### Relationship between enrollment rate and in/out-of state tuition per each diversity group
 
-- We are interested to know whether there is any correlation between enrollment rate and each diversity group
-- We have done analysis for both in state and out of state tuition in the next slides
-
-
-### Relationship between enrollment rate and in-state-tuition per each diversity group
+We are interested to know whether there is any correlations between enrollment rate and tuition per each diversity group. So, we merge tuition cost dataset and diversity dataset based on college name.
 
 ```{r,message=FALSE,fig.width=15,fig.height=8,fig.align='center'}
 diversity_tuition <- diversity_school %>% 
@@ -182,7 +197,10 @@ ggplot(diversity_tuition, aes(x = pct_category, y = in_state_tuition,color=categ
 
 ```
 
-### Relationship between enrollment rate and out-of-state tuition per each diversity group
+
+The above diagram shows the relationship between enrollment rate of each diversity group and in-state tuition. We can see  negative corrolations in American Indian, Native Hawaian, Black, Hispanic, and Total Minority groups, which means lower in-state tuition increases the enrollment rate. For white category and women category, there is no strong relationship. In Asian and Non-Resident Foreign categories, we see positive corrolations.
+
+The following figure demonstrates relationship between enrollment rate and out-of-state tuition. Almost the same trend like in-state tuition exists for out-of state tuition.
 
 ```{r,message=FALSE,fig.width=15,fig.height=8,fig.align='center'}
 
@@ -204,7 +222,8 @@ ggplot(diversity_tuition, aes(x = pct_category, y = out_of_state_tuition, color=
 ```
 
 ### Relationship between diversity groups enrollment rate and early career salary
-- we need to merge diversity dataset and salary dataset.
+
+To answer if there is any relationship between salary and diversity, we need to merge diversity and salary datasets.
 
 ```{r,message=FALSE,fig.width=15,fig.height=8,fig.align='center'}
 
@@ -226,12 +245,15 @@ ggplot(diversity_salary, aes(x = pct_category, y = early_career_pay, color=categ
 
 ```
 
+For Women, American Indian, Black and Native hawaian, the enrollment rate  has inverse direction with early career salary. For Asian, Hispanic, and Non Resident categories the enrollment rate has direct relationship with early career salary.
 
 ### Different types of colleges in US
 
 There are different types of colleges enrolling students across the country. According to this data set, three types of colleges are recognizable: public, private, and for profit. As shown in the following plot, public colleges are the majority category with 53 percent of all colleges and private and for-profit colleges are following public collages with 43 and 4 percent, respectively.
 
-```{r}
+$~$
+
+```{r, fig.width=4,fig.height=4}
 library(forcats)
 tuition_cost %>% filter(type!="Other") %>% group_by(type) %>% summarise(n=n()) %>% mutate(per=round(n/sum(n),2)) %>% ggplot(aes(x=fct_reorder(type,per), y=per,fill=as.factor(type)))+ geom_bar(stat="identity") +labs(y="Percentage of college ",x="Type")+
   geom_text(aes(label=per), position=position_dodge(width=0.9), vjust=-0.25)+
@@ -242,7 +264,8 @@ tuition_cost %>% filter(type!="Other") %>% group_by(type) %>% summarise(n=n()) %
 
 In this part, we explore the number of colleges in different states. According to the following plot, the top 5 states are California, New York, Pennsylvania, Texas, and Ohio. Rhode Island, Nevada, Delaware, Wyoming, and Alaska are the states with the least number of colleges. Iowa is ranked 19th in the country with 52 collages.
 
-```{r, fig.width=10,fig.height=8}
+
+```{r, fig.width=7,fig.height=8}
 tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% summarise(n=n()) %>% ggplot(aes(x=fct_reorder(state,n), y=n,fill=as.factor(state)))+ geom_bar(position = 'dodge',stat="identity") +labs(y="Number of college ",x="Type")+
   geom_text(aes(label=n), position=position_dodge(width=.3),hjust=1, vjust=.4)+
   coord_flip()+
@@ -250,10 +273,13 @@ tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% summarise(n=n(
 ```
 
 
-### Comparing different states in terms of in state and out of state tuition
+### Comparing different states in terms of in-state and out-of-state tuition
+
 Which states have a higher rate of tuition costs? This is a question that most students are interested to find an answer to it when they are going to choose a college to continue their studies. This section provides a comparison for in/out-of-state tuition in different states. As can be seen in the left boxplot Massachusetts is the most expensive state on average in terms of in-state tuition. On the other hand, North Carolina, Arizona, and New Mexico are the cheapest states on average for those who intend to pay in-state tuition.
 
 Same comparison is done for out-of-state tuition in right boxplot. This plot shows that Vermont has the largest out-of-state tuition cost on average and New Mexico is the most affordable state.
+
+$~$
 
 ```{r,fig.width=10,fig.height=8}
 plot_in<-tuition_cost[!is.na(tuition_cost$state),] %>% group_by(state) %>% ggplot(aes(x=fct_reorder(state,in_state_tuition), y=in_state_tuition,fill=as.factor(state))) +
@@ -313,7 +339,7 @@ gg <- gg + geom_map(data=summary_in_state, map=us,
   labs(title = "Mean in-state tuition of colleges in U.S. States",
     fill = "Mean Tuition") +scale_fill_viridis_c(option = "plasma",direction = -1) +
   facet_wrap(~type,ncol = 2)
-gg 
+gg+theme(text = element_text(size = 9)) 
 ```
 
 ### Out-of-state tuition, different type of colleges; What is the relationship?
@@ -333,7 +359,7 @@ gg <- gg + geom_map(data=summary_out_state, map=us,
   labs(title = "Mean out-of-state tuition of colleges in U.S. States",
     fill = "Mean Tuition") +scale_fill_viridis_c(option = "plasma",direction = -1) +
   facet_wrap(~type,ncol = 2)
-gg
+gg+theme(text = element_text(size = 9))
 ```
 
 ### The chepeast/most expensive colleges with out-of-state tuition
@@ -369,7 +395,9 @@ grid.arrange(plot_cheap,plot_exp, ncol=2)
 
 #### The cheapest/most expensive colleges with in-state tuition
 
-This section addresses the two questions of the previous section, this time for in-state tuition. According to the following bar charts, the cheapest and the most expensive colleges are the same as ou-of state tuition. The reason is that in-state tuition costs and out-of-state tuition costs are equal at Haskell Indian Nations University and Columbia University.
+This section addresses the two questions of the previous section, this time for in-state tuition. According to the following bar charts, the cheapest and the most expensive colleges are the same as out-of-state tuition. The reason is that in-state tuition costs and out-of-state tuition costs are equal in Haskell Indian Nations University and Columbia University.
+
+$~$ 
 
 ```{r,fig.width=12,fig.height=6}
 plot_exp2<-tuition_cost %>% group_by(name) %>%
