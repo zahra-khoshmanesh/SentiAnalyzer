@@ -1,0 +1,704 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  ignorenonframetext,
+]{beamer}
+\usepackage{pgfpages}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamercolor{caption name}{fg=normal text.fg}
+\beamertemplatenavigationsymbolsempty
+% Prevent slide breaks in the middle of a paragraph
+\widowpenalties 1 10000
+\raggedbottom
+\setbeamertemplate{part page}{
+  \centering
+  \begin{beamercolorbox}[sep=16pt,center]{part title}
+    \usebeamerfont{part title}\insertpart\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center]{part title}
+    \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center]{part title}
+    \usebeamerfont{subsection title}\insertsubsection\par
+  \end{beamercolorbox}
+}
+\AtBeginPart{
+  \frame{\partpage}
+}
+\AtBeginSection{
+  \ifbibliography
+  \else
+    \frame{\sectionpage}
+  \fi
+}
+\AtBeginSubsection{
+  \frame{\subsectionpage}
+}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={``College tuition, diversity, and pay''},
+  pdfauthor={Zahra Khoshmanesh, Vahid Azizi, and Saba Moeinizade},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\newif\ifbibliography
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs}
+\usepackage{caption}
+% Make caption package work with longtable
+\makeatletter
+\def\fnum@table{\tablename~\thetable}
+\makeatother
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{\Large ``College tuition, diversity, and pay''}
+\author{Zahra Khoshmanesh, Vahid Azizi, and Saba Moeinizade}
+\date{4/27/2020}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}
+
+\includegraphics{https://camo.githubusercontent.com/f1aad78bb6d285d0386edfe0709a602e2e23ed9a/68747470733a2f2f696d616765732e756e73706c6173682e636f6d2f70686f746f2d313533333835343737353434362d3935633436303964613534343f69786c69623d72622d312e322e3126697869643d65794a6863484266615751694f6a45794d446439266175746f3d666f726d6174266669743d63726f7026773d3133353026713d3830}
+
+\end{frame}
+
+\begin{frame}{Introduction}
+\protect\hypertarget{introduction}{}
+
+\begin{itemize}
+\tightlist
+\item
+  Many people are interested to know about the tuition, costs, diversity
+  and potential salary when searching for college.
+\item
+  In this project, we want to analyze:
+\end{itemize}
+
+\begin{enumerate}
+\tightlist
+\item
+  Diversity among schools across US
+\item
+  Tuition costs across different states
+\item
+  Historical trends of tuition
+\item
+  Average potential salary for graduates from different universities
+\end{enumerate}
+
+\begin{itemize}
+\tightlist
+\item
+  We have 4 datasets with 23 variables and more than 50000 observations.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Diversity dataset}
+\protect\hypertarget{diversity-dataset}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{diversity_school }\OperatorTok{%>%}\StringTok{ }\KeywordTok{glimpse}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Rows: 50,655
+## Columns: 5
+## $ name             <chr> "University of Phoenix-Arizona", "University of Ph...
+## $ total_enrollment <dbl> 195059, 195059, 195059, 195059, 195059, 195059, 19...
+## $ state            <chr> "Arizona", "Arizona", "Arizona", "Arizona", "Arizo...
+## $ category         <chr> "Women", "American Indian / Alaska Native", "Asian...
+## $ enrollment       <dbl> 134722, 876, 1959, 31455, 13984, 1019, 58209, 1903...
+\end{verbatim}
+
+\begin{longtable}[]{@{}lrllr@{}}
+\toprule
+name & total\_enrollment & state & category & enrollment\tabularnewline
+\midrule
+\endhead
+University of Phoenix-Arizona & 195059 & Arizona & Women &
+134722\tabularnewline
+University of Phoenix-Arizona & 195059 & Arizona & American Indian /
+Alaska Native & 876\tabularnewline
+University of Phoenix-Arizona & 195059 & Arizona & Asian &
+1959\tabularnewline
+University of Phoenix-Arizona & 195059 & Arizona & Black &
+31455\tabularnewline
+University of Phoenix-Arizona & 195059 & Arizona & Hispanic &
+13984\tabularnewline
+University of Phoenix-Arizona & 195059 & Arizona & Native Hawaiian /
+Pacific Islander & 1019\tabularnewline
+\bottomrule
+\end{longtable}
+
+\end{frame}
+
+\begin{frame}{Bar chart of all diversity categories and ethnicity groups
+in the US colledge}
+\protect\hypertarget{bar-chart-of-all-diversity-categories-and-ethnicity-groups-in-the-us-colledge}{}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-3-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Finding the most diverse campus for each diversity
+category}
+\protect\hypertarget{finding-the-most-diverse-campus-for-each-diversity-category}{}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|l|l|r|r|r}
+\hline
+category & university\_name & state & enrollment\_rate & total\_enroll & category\_enroll\\
+\hline
+American Indian / Alaska Native & Haskell Indian Nations University & Kansas & 100.00000 & 808 & 808\\
+\hline
+Asian & Grace Mission University & California & 95.45455 & 88 & 84\\
+\hline
+Black & Lane College & Tennessee & 100.00000 & 1262 & 1262\\
+\hline
+Hispanic & Professional Hands Institute & Florida & 100.00000 & 37 & 37\\
+\hline
+Native Hawaiian / Pacific Islander & Argosy University at Honolulu & Hawaii & 49.73205 & 933 & 464\\
+\hline
+Non-Resident Foreign & Knowledge Systems Institute & Illinois & 97.92746 & 193 & 189\\
+\hline
+Total Minority & Lane College & Tennessee & 100.00000 & 1262 & 1262\\
+\hline
+Two Or More Races & University of Hawaii Windward Community College & Hawaii & 40.13529 & 2661 & 1068\\
+\hline
+Unknown & Le Cordon Bleu College of Culinary Arts at San Francisco & California & 90.27149 & 442 & 399\\
+\hline
+White & Rabbinical Seminary of America & New York & 100.00000 & 500 & 500\\
+\hline
+Women & Spelman College & Georgia & 100.00000 & 2135 & 2135\\
+\hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{Finding the most diverse campus for each diversity
+category}
+\protect\hypertarget{finding-the-most-diverse-campus-for-each-diversity-category-1}{}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-5-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Diversity map of the US for each diversity group}
+\protect\hypertarget{diversity-map-of-the-us-for-each-diversity-group}{}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-6-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Women enrollment rate across the US}
+\protect\hypertarget{women-enrollment-rate-across-the-us}{}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-7-1} \end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]{Tuition cost dataset}
+\protect\hypertarget{tuition-cost-dataset}{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tuition_cost }\OperatorTok{%>%}\StringTok{ }\KeywordTok{glimpse}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Rows: 2,973
+## Columns: 10
+## $ name                 <chr> "Aaniiih Nakoda College", "Abilene Christian U...
+## $ state                <chr> "Montana", "Texas", "Georgia", "Minnesota", "C...
+## $ state_code           <chr> "MT", "TX", "GA", "MN", "CA", "CO", "NY", "NY"...
+## $ type                 <chr> "Public", "Private", "Public", "For Profit", "...
+## $ degree_length        <chr> "2 Year", "4 Year", "2 Year", "2 Year", "4 Yea...
+## $ room_and_board       <dbl> NA, 10350, 8474, NA, 16648, 8782, 16030, 11660...
+## $ in_state_tuition     <dbl> 2380, 34850, 4128, 17661, 27810, 9440, 38660, ...
+## $ in_state_total       <dbl> 2380, 45200, 12602, 17661, 44458, 18222, 54690...
+## $ out_of_state_tuition <dbl> 2380, 34850, 12550, 17661, 27810, 20456, 38660...
+## $ out_of_state_total   <dbl> 2380, 45200, 21024, 17661, 44458, 29238, 54690...
+\end{verbatim}
+
+\begin{block}{Merge tuition cost dataset and diversity dataset}
+
+\begin{itemize}
+\tightlist
+\item
+  We are interested to know whether there is any correlation between
+  enrollment rate and each diversity group
+\item
+  We have done analysis for both in state and out of state tuition in
+  the next slides
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Relationship between enrollment rate and in-state-tuition
+per each diversity group}
+\protect\hypertarget{relationship-between-enrollment-rate-and-in-state-tuition-per-each-diversity-group}{}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-9-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Relationship between enrollment rate and out-of-state
+tuition per each diversity group}
+\protect\hypertarget{relationship-between-enrollment-rate-and-out-of-state-tuition-per-each-diversity-group}{}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-10-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Relationship between diversity groups enrollment rate and
+early career salary}
+\protect\hypertarget{relationship-between-diversity-groups-enrollment-rate-and-early-career-salary}{}
+
+\begin{itemize}
+\tightlist
+\item
+  we need to merge diversity dataset and salary dataset.
+\end{itemize}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-11-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Different types of colleges in US}
+\protect\hypertarget{different-types-of-colleges-in-us}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-12-1.pdf}
+
+\end{frame}
+
+\begin{frame}{How many colleges are there in each state?}
+\protect\hypertarget{how-many-colleges-are-there-in-each-state}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-13-1.pdf}
+
+\end{frame}
+
+\begin{frame}{Comparing different states in terms of in-state tuition}
+\protect\hypertarget{comparing-different-states-in-terms-of-in-state-tuition}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-14-1.pdf}
+
+\end{frame}
+
+\begin{frame}{Comparing different states in terms of out-of-state
+tuition}
+\protect\hypertarget{comparing-different-states-in-terms-of-out-of-state-tuition}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-15-1.pdf}
+
+\end{frame}
+
+\begin{frame}{Comparing in/out-of state tuition (1/2)}
+\protect\hypertarget{comparing-inout-of-state-tuition-12}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-16-1.pdf}
+
+\end{frame}
+
+\begin{frame}{Comparing in/out-of state tuition (2/2)}
+\protect\hypertarget{comparing-inout-of-state-tuition-22}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-17-1.pdf}
+
+\end{frame}
+
+\begin{frame}{In-state tuition, different type of colleges; What is the
+relationship?}
+\protect\hypertarget{in-state-tuition-different-type-of-colleges-what-is-the-relationship}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-18-1.pdf}
+
+\end{frame}
+
+\begin{frame}{Out-of-state tuition, different type of colleges; What is
+the relationship?}
+\protect\hypertarget{out-of-state-tuition-different-type-of-colleges-what-is-the-relationship}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-19-1.pdf}
+
+\end{frame}
+
+\begin{frame}{Most expensive colleges with out-of-state tuition}
+\protect\hypertarget{most-expensive-colleges-with-out-of-state-tuition}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-20-1.pdf}
+
+\end{frame}
+
+\begin{frame}{The chepeast Collleges in terms of out-of-state tuition}
+\protect\hypertarget{the-chepeast-collleges-in-terms-of-out-of-state-tuition}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-21-1.pdf}
+
+\end{frame}
+
+\begin{frame}{Most expensive colleges with in-state tuition}
+\protect\hypertarget{most-expensive-colleges-with-in-state-tuition}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-22-1.pdf}
+
+\end{frame}
+
+\begin{frame}{The cheapest colleges in terms of in-state-tuition}
+\protect\hypertarget{the-cheapest-colleges-in-terms-of-in-state-tuition}{}
+
+\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-23-1.pdf}
+
+\end{frame}
+
+\begin{frame}{The historical tuition dataset}
+\protect\hypertarget{the-historical-tuition-dataset}{}
+
+\begin{block}{270 observations and 4 variables}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|l|l|r}
+\hline
+type & year & tuition\_type & tuition\_cost\\
+\hline
+All Institutions & 1985-86 & All Constant & 10893\\
+\hline
+All Institutions & 1985-86 & 4 Year Constant & 12274\\
+\hline
+All Institutions & 1985-86 & 2 Year Constant & 7508\\
+\hline
+All Institutions & 1985-86 & All Current & 4885\\
+\hline
+All Institutions & 1985-86 & 4 Year Current & 5504\\
+\hline
+All Institutions & 1985-86 & 2 Year Current & 3367\\
+\hline
+\end{tabular}
+\end{table}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]{The historical tuition dataset}
+\protect\hypertarget{the-historical-tuition-dataset-1}{}
+
+\begin{block}{We observe that the data is available consistantly from
+2000 till 2017.}
+
+\begin{verbatim}
+##  [1] "1985-86" "1995-96" "2000-01" "2001-02" "2002-03" "2003-04" "2004-05"
+##  [8] "2005-06" "2006-07" "2007-08" "2008-09" "2009-10" "2010-11" "2011-12"
+## [15] "2012-13" "2013-14" "2014-15" "2015-16" "2016-17"
+\end{verbatim}
+
+\end{block}
+
+\begin{block}{For convinience, we will consider the end of year.}
+
+\begin{verbatim}
+##  [1] 1986 1996 2001 2002 2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013
+## [16] 2014 2015 2016 2017
+\end{verbatim}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Average tuition cost over time}
+\protect\hypertarget{average-tuition-cost-over-time}{}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-27-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Tuition comparison between 2 year and 4 year programs}
+\protect\hypertarget{tuition-comparison-between-2-year-and-4-year-programs}{}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-28-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Salary potential dataset}
+\protect\hypertarget{salary-potential-dataset}{}
+
+\begin{block}{935 observations and 6 variables including:}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{r|l|l|r|r|r}
+\hline
+rank & name & state\_name & early\_career\_pay & mid\_career\_pay & stem\_percent\\
+\hline
+1 & Auburn University & Alabama & 54400 & 104500 & 31\\
+\hline
+2 & University of Alabama in Huntsville & Alabama & 57500 & 103900 & 45\\
+\hline
+3 & The University of Alabama & Alabama & 52300 & 97400 & 15\\
+\hline
+4 & Tuskegee University & Alabama & 54500 & 93500 & 30\\
+\hline
+5 & Samford University & Alabama & 48400 & 90500 & 3\\
+\hline
+6 & Spring Hill College & Alabama & 46600 & 89100 & 12\\
+\hline
+\end{tabular}
+\end{table}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Which states have the highest/least potential salary?}
+\protect\hypertarget{which-states-have-the-highestleast-potential-salary}{}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-30-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Top 5 states}
+\protect\hypertarget{top-5-states}{}
+
+\begin{tabular}{l|r}
+\hline
+state\_name & average\_mid\_career\_pay\\
+\hline
+California & 123976\\
+\hline
+New-York & 122328\\
+\hline
+Massachusetts & 115712\\
+\hline
+Pennsylvania & 110884\\
+\hline
+Texas & 103476\\
+\hline
+\end{tabular}
+
+\begin{tabular}{l|r}
+\hline
+state\_name & average\_early\_career\_pay\\
+\hline
+California & 67232\\
+\hline
+New-York & 66688\\
+\hline
+Massachusetts & 63100\\
+\hline
+Pennsylvania & 60644\\
+\hline
+Texas & 57468\\
+\hline
+\end{tabular}
+
+\end{frame}
+
+\begin{frame}{Let's take a closer look at Iowa}
+\protect\hypertarget{lets-take-a-closer-look-at-iowa}{}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{r|l|l|r|r|r}
+\hline
+rank & name & state\_name & early\_career\_pay & mid\_career\_pay & stem\_percent\\
+\hline
+1 & Iowa State University & Iowa & 56100 & 101300 & 31\\
+\hline
+2 & Drake University & Iowa & 52800 & 99900 & 7\\
+\hline
+3 & University of Iowa & Iowa & 54100 & 99400 & 16\\
+\hline
+4 & Grinnell College & Iowa & 53400 & 96500 & 41\\
+\hline
+5 & Allen College & Iowa & 51600 & 91300 & 0\\
+\hline
+6 & Cornell College & Iowa & 49600 & 90600 & 22\\
+\hline
+7 & Loras College & Iowa & 48000 & 90100 & 14\\
+\hline
+8 & Dordt College & Iowa & 51000 & 89600 & 17\\
+\hline
+9 & Central College & Iowa & 49000 & 88800 & 36\\
+\hline
+10 & Graceland University-Lamoni & Iowa & 48300 & 88700 & 5\\
+\hline
+11 & Simpson College & Iowa & 49900 & 88600 & 17\\
+\hline
+12 & Wartburg College & Iowa & 49300 & 88000 & 34\\
+\hline
+13 & Coe College & Iowa & 47200 & 86900 & 24\\
+\hline
+14 & Luther College & Iowa & 48200 & 85900 & 21\\
+\hline
+15 & University of Northern Iowa & Iowa & 47100 & 85300 & 8\\
+\hline
+16 & Maharishi University of Management & Iowa & 46800 & 85200 & 65\\
+\hline
+17 & Saint Ambrose University & Iowa & 46900 & 84400 & 8\\
+\hline
+18 & Northwestern College & Iowa & 44800 & 82400 & 11\\
+\hline
+19 & Morningside College & Iowa & 44900 & 82100 & 6\\
+\hline
+20 & Clarke University & Iowa & 44900 & 80200 & 6\\
+\hline
+21 & University of Dubuque & Iowa & 44200 & 79700 & 7\\
+\hline
+22 & Mount Mercy University & Iowa & 47200 & 79000 & 4\\
+\hline
+23 & William Penn University & Iowa & 43900 & 78300 & 7\\
+\hline
+24 & Upper Iowa University & Iowa & 44200 & 78000 & 3\\
+\hline
+25 & Iowa Wesleyan University & Iowa & 42600 & 77200 & 8\\
+\hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{In Iowa, ISU has the highest potential salary}
+\protect\hypertarget{in-iowa-isu-has-the-highest-potential-salary}{}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-34-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{What is average stem percent across different states?}
+\protect\hypertarget{what-is-average-stem-percent-across-different-states}{}
+
+\begin{center}\includegraphics{Presentation_files/figure-beamer/unnamed-chunk-35-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Conclusions}
+\protect\hypertarget{conclusions}{}
+
+\begin{itemize}
+\tightlist
+\item
+  The map of diversity across the US indicates that the US colleges are
+  not equally diverse geographically.
+\item
+  There are some relationship between different diversity groups and
+  tuition and early career salary.
+\item
+  Massachusetts has the highest in state tuition
+\item
+  Private schools cost more than public schools
+\item
+  Historical trend of tuition showed that tuition is increasing over
+  time
+\item
+  Universities located in west/east cost have higher stem percent and
+  also higher potential salary
+\end{itemize}
+
+\end{frame}
+
+\end{document}
